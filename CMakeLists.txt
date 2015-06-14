@@ -41,6 +41,8 @@ set(allSRCS
     FSMScene.h
     fsm-elements/State.cpp
     fsm-elements/State.h
+    undo/AddStateCommand.cpp
+    undo/AddStateCommand.h
     )
 
 set(linkLibraries

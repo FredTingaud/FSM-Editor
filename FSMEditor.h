@@ -5,8 +5,10 @@
 #include <fsm-editor/FSMScene.h>
 
 #include <QGraphicsView>
+#include <QUndoStack>
 
 class QToolBar;
+class QUndoCommand;
 
 class FSMEditor : public QSplitter
 {
@@ -17,6 +19,7 @@ public:
   Q_SLOT void zoomIn();
   Q_SLOT void zoomOut();
 
+  Q_SLOT void stackCommand(QUndoCommand* command);
 private:
   QWidget* makeViewPanel();
 
@@ -27,4 +30,6 @@ private:
 private:
   FSMScene scene_;
   QGraphicsView fsmView_;
+
+  QUndoStack undoStack_;
 };
