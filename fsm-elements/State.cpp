@@ -8,10 +8,11 @@ const qreal State::HEIGHT = 20;
 const qreal State::H_MARGIN = 4;
 const qreal State::V_MARGIN = 4;
 
-State::State(QString title)
+State::State(QString title, const QPointF& position)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
   , title_(title)
 {
+  setPos(position);
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 }
 

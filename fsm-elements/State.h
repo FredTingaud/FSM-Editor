@@ -6,7 +6,7 @@ class State : public QGraphicsRectItem
 {
   using super = QGraphicsRectItem;
 public:
-  State(QString title);
+  State(QString title, const QPointF& position);
 
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 
