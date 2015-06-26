@@ -7,9 +7,12 @@
 #include <QUndoCommand>
 
 int FSMScene::index = 0;
+const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
 
 FSMScene::FSMScene()
-{}
+{
+  setBackgroundBrush(QBrush(BACKGROUND_COLOR));
+}
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {

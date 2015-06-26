@@ -11,6 +11,7 @@ const qreal State::WIDTH = 50;
 const qreal State::HEIGHT = 20;
 const qreal State::H_MARGIN = 4;
 const qreal State::V_MARGIN = 4;
+const QColor State::PEN_COLOR = QColor(190, 190, 190);
 
 State::State(QString title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
@@ -18,6 +19,7 @@ State::State(QString title, const QPointF& position, std::function<void(QUndoCom
   , title_(title)
   , pushStack_(std::move(pushStack))
 {
+  setPen(PEN_COLOR);
   setPos(position);
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
 }

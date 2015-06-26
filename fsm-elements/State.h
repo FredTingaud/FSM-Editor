@@ -31,6 +31,7 @@ private:
   static const qreal HEIGHT;
   static const qreal H_MARGIN;
   static const qreal V_MARGIN;
+  static const QColor PEN_COLOR;
 private:
   QString title_;
   QString content_;

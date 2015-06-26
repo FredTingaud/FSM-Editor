@@ -24,4 +24,5 @@ public:
 
 private:
   static int index;
+  static const QColor BACKGROUND_COLOR;
 };
