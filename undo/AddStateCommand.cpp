@@ -1,11 +1,10 @@
 #include <fsm-editor/undo/AddStateCommand.h>
-
 #include <fsm-editor/fsm-elements/State.h>
+#include <fsm-editor/FSMScene.h>
 
-#include <QGraphicsScene>
 #include <QTransform>
 
-AddStateCommand::AddStateCommand(QGraphicsScene* scene, const QString& name, const QPointF& position)
+AddStateCommand::AddStateCommand(FSMScene* scene, const QString& name, const QPointF& position)
   : QUndoCommand(QString("Create state %1").arg(name))
   , scene_(scene)
   , name_(name)
@@ -19,5 +18,5 @@ void AddStateCommand::undo()
 
 void AddStateCommand::redo()
 {
-  scene_->addItem(new State(name_, pos_));
+  scene_->addItem(new State(name_, pos_, [&](QUndoCommand* command){scene_->pushCommand(command); }));
 }
