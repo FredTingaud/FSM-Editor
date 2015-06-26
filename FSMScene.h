@@ -19,7 +19,7 @@ public:
 public:
   enum UNDO_IDS
   {
-    UNDO_MOVE
+    UNDO_MOVE = 1
   };
 
 private:
