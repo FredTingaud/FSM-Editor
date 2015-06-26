@@ -1,8 +1,11 @@
 #include <fsm-editor/fsm-elements/State.h>
+#include <fsm-editor/FSMScene.h>
 #include <fsm-editor/undo/MoveStateCommand.h>
+#include <fsm-editor/undo/DeleteStateCommand.h>
 
 #include <QPainter>
 #include <QDebug>
+#include <QKeyEvent>
 
 const qreal State::WIDTH = 50;
 const qreal State::HEIGHT = 20;
@@ -56,4 +59,19 @@ void State::setSilentMove(bool silent)
 QString State::title() const
 {
   return title_;
+}
+
+void State::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Delete)
+  {
+    pushStack_(new DeleteStateCommand(scene(), title_, pos()));
+    event->accept();
+  }
+  super::keyPressEvent(event);
+}
+
+FSMScene* State::scene() const
+{
+  return static_cast<FSMScene*>(super::scene());
 }

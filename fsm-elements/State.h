@@ -5,6 +5,8 @@
 #include <QGraphicsRectItem>
 #include <QUndoCommand>
 
+class FSMScene;
+
 class State : public QGraphicsRectItem
 {
   using super = QGraphicsRectItem;
@@ -21,12 +23,14 @@ public:
 
   QString title() const;
 
+  virtual void keyPressEvent(QKeyEvent *event) override;
+
+  FSMScene* scene() const;
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
   static const qreal H_MARGIN;
   static const qreal V_MARGIN;
-
 private:
   QString title_;
   QString content_;
