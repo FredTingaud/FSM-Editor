@@ -18,5 +18,6 @@ void AddStateCommand::undo()
 
 void AddStateCommand::redo()
 {
-  scene_->addItem(new State(name_, pos_, [&](QUndoCommand* command){scene_->pushCommand(command); }));
+  FSMScene* copy = scene_;
+  scene_->addItem(new State(name_, pos_, [=](QUndoCommand* command){copy->pushCommand(command); }));
 }
