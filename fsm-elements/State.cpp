@@ -1,4 +1,5 @@
 #include <fsm-editor/fsm-elements/State.h>
+#include <fsm-editor/fsm-elements/Transition.h>
 #include <fsm-editor/FSMScene.h>
 #include <fsm-editor/undo/MoveStateCommand.h>
 #include <fsm-editor/undo/DeleteStateCommand.h>
@@ -15,18 +16,26 @@ const QColor State::PEN_COLOR = QColor(190, 190, 190);
 
 State::State(QString title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
-  , silent_(false)
   , title_(title)
   , pushStack_(std::move(pushStack))
+  , silent_(false)
 {
   setPen(PEN_COLOR);
   setPos(position);
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
+  setAcceptHoverEvents(true);
 }
 
 void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget /*= 0*/)
 {
   super::paint(painter, option, widget);
+
+  shrinkTextToFit(painter);
+  painter->drawText(rect(), Qt::AlignCenter, title_);
+}
+
+void State::shrinkTextToFit(QPainter * painter)
+{
   QFontMetrics metrics = painter->fontMetrics();
   QFont font = painter->font();
   while (!fitInRect(rect(), metrics.boundingRect(title_)) && font.pointSize() > 3)
@@ -35,7 +44,6 @@ void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setFont(font);
     metrics = painter->fontMetrics();
   }
-  painter->drawText(rect(), Qt::AlignCenter, title_);
 }
 
 bool State::fitInRect(const QRectF& rect, const QRect& bounding)
@@ -73,7 +81,27 @@ void State::keyPressEvent(QKeyEvent *event)
   super::keyPressEvent(event);
 }
 
+void State::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+  if (transitions_.isEmpty() || transitions_.last()->hasDestination())
+  {
+    Transition* danglingTransition = new Transition(this);
+    transitions_.append(danglingTransition);
+    scene()->addItem(danglingTransition);
+  }
+  transitions_.last()->setParentOvered(true);
+  super::hoverEnterEvent(event);
+}
+
+void State::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+  transitions_.last()->setParentOvered(false);
+  super::hoverLeaveEvent(event);
+}
+
 FSMScene* State::scene() const
 {
-  return static_cast<FSMScene*>(super::scene());
+  if (super::scene())
+    return static_cast<FSMScene*>(super::scene());
+  return nullptr;
 }
