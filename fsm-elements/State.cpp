@@ -56,6 +56,10 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
   QVariant result = super::itemChange(change, value);
   if (!silent_ && change == QGraphicsItem::ItemPositionChange)
   {
+    for (Transition* child : transitions_)
+    {
+      child->initPos();
+    }
     pushStack_(new MoveStateCommand(scene(), title_, value.toPointF(), this));
   }
   return result;
