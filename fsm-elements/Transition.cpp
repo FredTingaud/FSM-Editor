@@ -23,14 +23,7 @@ Transition::Transition(State* origin)
 
 void Transition::initPos()
 {
-  if (isDangling())
-  {
-    setPos(origin_->pos() + origin_->rect().topRight() - QPointF(LINK_SIZE, 0));
-  }
-  else
-  {
-    setPos(destination_->pos());
-  }
+  setPos(origin_->pos());
 }
 
 bool Transition::isDangling() const
@@ -65,10 +58,11 @@ QList<QPolygonF> Transition::calculateShape() const
 {
   QPainterPath result;
   QPolygonF triangle;
-  triangle << QPointF(0, -LINK_SIZE / 2) << QPointF(LINK_SIZE, 0) << QPointF(0, LINK_SIZE / 2);
+  triangle << QPointF(-LINK_SIZE, -LINK_SIZE / 2) << QPointF(0, 0) << QPointF(-LINK_SIZE, LINK_SIZE / 2);
   if (isDangling())
   {
     QTransform transformation;
+    transformation.translate(origin_->rect().width(), 0.);
     transformation.rotate(-45);
     result.addPolygon(triangle);
     return result.toSubpathPolygons(transformation);
