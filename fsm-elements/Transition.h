@@ -20,16 +20,12 @@ public:
 
   QList<QPolygonF> calculateShape() const;
 
-  QPointF getIntersection(const QRectF& rect) const;
-
   QPointF destinationPoint() const;
 
   bool hasDestination() const;
   State* destination() const;
 
   void setParentOvered(bool hovered);
-
-  void updateVisibility();
 
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
@@ -38,9 +34,22 @@ public:
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
+
+  QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, QPolygonF triangle) const;
+  QList<QPolygonF> calculateDangling(QPainterPath& result, QPolygonF triangle) const;
+  QList<QPolygonF> calculateMovingArrow(QPainterPath result, QPolygonF triangle) const;
+
+  void addBentLine(const QPointF& originPoint, const QLineF& line, const QPointF& destPoint, QList<QPolygonF>& polys) const;
+
+  QPointF getIntersection(const QRectF& rect) const;
+
+  void updateVisibility();
+
+private:
+  static const qreal LINK_SIZE;
+  static const qreal ARC;
   static const QColor LINK_COLOR;
   static const QColor LINK_BORDER;
-  static const qreal LINK_SIZE;
 
 private:
   State* origin_;
