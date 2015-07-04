@@ -3,9 +3,12 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 #include <QPainter>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 
 const qreal Transition::LINK_SIZE = 8;
 const QColor Transition::LINK_COLOR = QColor(220, 80, 80);
+const QColor Transition::LINK_BORDER = QColor(210, 40, 40);
 
 Transition::Transition(State* origin)
   : origin_(origin)
@@ -14,22 +17,78 @@ Transition::Transition(State* origin)
   , parentHovered_(false)
 {
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
-  setPos(origin_->pos() + origin_->rect().topRight() - QPointF(LINK_SIZE, 0));
+  initPos();
   updateVisibility();
+}
+
+void Transition::initPos()
+{
+  if (isDangling())
+  {
+    setPos(origin_->pos() + origin_->rect().topRight() - QPointF(LINK_SIZE, 0));
+  }
+  else
+  {
+    setPos(destination_->pos());
+  }
+}
+
+bool Transition::isDangling() const
+{
+  return destination_ == nullptr;
 }
 
 QRectF Transition::boundingRect() const
 {
-  return QRectF(0, 0, LINK_SIZE, LINK_SIZE);
+  QRectF result;
+  QList<QPolygonF> shape = calculateShape();
+  for (QPolygonF poly : shape)
+  {
+    result = result.united(poly.boundingRect());
+  }
+  return result;
 }
 
 void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget /*= 0*/)
 {
-  QPolygonF triangle;
-  QPointF topRight = boundingRect().topRight();
-  triangle << topRight << topRight + QPointF(-LINK_SIZE, 0) << topRight + QPointF(0, LINK_SIZE);
   painter->setBrush(LINK_COLOR);
-  painter->drawPolygon(triangle);
+  painter->setPen(LINK_BORDER);
+  QList<QPolygonF> shape = calculateShape();
+  for (QPolygonF poly : shape)
+  {
+    painter->drawPolygon(poly);
+  }
+  calculateShape();
+}
+
+QList<QPolygonF> Transition::calculateShape() const
+{
+  QPainterPath result;
+  QPolygonF triangle;
+  triangle << QPointF(0, -LINK_SIZE / 2) << QPointF(LINK_SIZE, 0) << QPointF(0, LINK_SIZE / 2);
+  if (isDangling())
+  {
+    QTransform transformation;
+    transformation.rotate(-45);
+    result.addPolygon(triangle);
+    return result.toSubpathPolygons(transformation);
+  }
+  else
+  {
+    QList<QPolygonF> polys;
+    QPolygonF linePoly;
+    QPointF destPoint = mapFromParent(destination_->pos() + destination_->rect().center());
+    QPointF originPoint = mapFromParent(origin_->pos() + origin_->rect().center());
+    QLineF line(originPoint, destPoint);
+    linePoly << originPoint << destPoint;
+    polys << linePoly;
+    result.addPolygon(triangle);
+    QTransform transformation;
+    transformation.translate(destPoint.x(), destPoint.y());
+    transformation.rotate(-line.angle());
+    polys << result.toSubpathPolygons(transformation);
+    return polys;
+  }
 }
 
 bool Transition::hasDestination() const
@@ -50,7 +109,7 @@ void Transition::setParentOvered(bool hovered)
 
 void Transition::updateVisibility()
 {
-  setVisible(parentHovered_ || hovered_);
+  setVisible(destination_ != nullptr || parentHovered_ || hovered_);
 }
 
 void Transition::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -65,4 +124,25 @@ void Transition::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
   hovered_ = false;
   updateVisibility();
   super::hoverLeaveEvent(event);
+}
+
+void Transition::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+  super::mouseMoveEvent(event);
+}
+
+void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+  QList<QGraphicsItem*> items = scene()->collidingItems(this);
+  for (QGraphicsItem* item : items)
+  {
+    State* child = dynamic_cast<State*>(item);
+    if (child != nullptr)
+    {
+      destination_ = child;
+      break;
+    }
+  }
+  initPos();
+  super::mouseReleaseEvent(event);
 }

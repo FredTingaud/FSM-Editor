@@ -10,9 +10,15 @@ class Transition : public QGraphicsItem
 public:
   Transition(State* origin);
 
+  void initPos();
+
+  bool isDangling() const;
+
   virtual QRectF boundingRect() const override;
 
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
+
+  QList<QPolygonF> calculateShape() const;
 
   bool hasDestination() const;
   State* destination() const;
@@ -24,8 +30,12 @@ public:
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
+  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
 private:
   static const QColor LINK_COLOR;
+  static const QColor LINK_BORDER;
   static const qreal LINK_SIZE;
 
 private:
