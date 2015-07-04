@@ -22,6 +22,8 @@ public:
 
   QPointF getIntersection(const QRectF& rect) const;
 
+  QPointF destinationPoint() const;
+
   bool hasDestination() const;
   State* destination() const;
 
@@ -43,6 +45,7 @@ private:
 private:
   State* origin_;
   State* destination_;
+  QPointF movingPos_;
   bool hovered_;
   bool parentHovered_;
 };

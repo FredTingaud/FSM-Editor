@@ -28,7 +28,7 @@ void Transition::initPos()
 
 bool Transition::isDangling() const
 {
-  return destination_ == nullptr;
+  return destination_ == nullptr && movingPos_.isNull();
 }
 
 QRectF Transition::boundingRect() const
@@ -72,7 +72,15 @@ QList<QPolygonF> Transition::calculateShape() const
     QList<QPolygonF> polys;
     QPolygonF linePoly;
     QPointF originPoint = getIntersection(mapFromItem(origin_, origin_->rect()).boundingRect());
-    QPointF destPoint = getIntersection(mapFromItem(destination_, destination_->rect()).boundingRect());
+    QPointF destPoint;
+    if (movingPos_.isNull())
+    {
+      destPoint = getIntersection(mapFromItem(destination_, destination_->rect()).boundingRect());
+    }
+    else
+    {
+      destPoint = mapFromScene(movingPos_);
+    }
     QLineF line(originPoint, destPoint);
     linePoly << originPoint << destPoint;
     polys << linePoly;
@@ -88,7 +96,7 @@ QList<QPolygonF> Transition::calculateShape() const
 QPointF Transition::getIntersection(const QRectF& rect) const
 {
   QPointF res;
-  QLineF wholeLine(mapFromItem(origin_, origin_->rect().center()), mapFromItem(destination_, destination_->rect().center()));
+  QLineF wholeLine(mapFromItem(origin_, origin_->rect().center()), destinationPoint());
   QLineF top(rect.topLeft(), rect.topRight());
   if (wholeLine.intersect(top, &res) == QLineF::BoundedIntersection)
     return res;
@@ -103,6 +111,13 @@ QPointF Transition::getIntersection(const QRectF& rect) const
     return res;
   Q_ASSERT_X(false, "Transition::getIntersection", "Given rectangle doesn't intersect with line");
   return rect.center();
+}
+
+QPointF Transition::destinationPoint() const
+{
+  if (movingPos_.isNull())
+    return mapFromItem(destination_, destination_->rect().center());
+  return mapFromScene(movingPos_);
 }
 
 bool Transition::hasDestination() const
@@ -143,10 +158,12 @@ void Transition::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Transition::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   super::mouseMoveEvent(event);
+  movingPos_ = event->scenePos();
 }
 
 void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+  movingPos_ = QPointF();
   QList<QGraphicsItem*> items = scene()->collidingItems(this);
   for (QGraphicsItem* item : items)
   {
