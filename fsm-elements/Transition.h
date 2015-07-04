@@ -20,6 +20,8 @@ public:
 
   QList<QPolygonF> calculateShape() const;
 
+  QPointF getIntersection(const QRectF& rect) const;
+
   bool hasDestination() const;
   State* destination() const;
 

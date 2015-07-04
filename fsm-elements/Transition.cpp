@@ -71,8 +71,8 @@ QList<QPolygonF> Transition::calculateShape() const
   {
     QList<QPolygonF> polys;
     QPolygonF linePoly;
-    QPointF destPoint = mapFromParent(destination_->pos() + destination_->rect().center());
-    QPointF originPoint = mapFromParent(origin_->pos() + origin_->rect().center());
+    QPointF originPoint = getIntersection(mapFromItem(origin_, origin_->rect()).boundingRect());
+    QPointF destPoint = getIntersection(mapFromItem(destination_, destination_->rect()).boundingRect());
     QLineF line(originPoint, destPoint);
     linePoly << originPoint << destPoint;
     polys << linePoly;
@@ -83,6 +83,26 @@ QList<QPolygonF> Transition::calculateShape() const
     polys << result.toSubpathPolygons(transformation);
     return polys;
   }
+}
+
+QPointF Transition::getIntersection(const QRectF& rect) const
+{
+  QPointF res;
+  QLineF wholeLine(mapFromItem(origin_, origin_->rect().center()), mapFromItem(destination_, destination_->rect().center()));
+  QLineF top(rect.topLeft(), rect.topRight());
+  if (wholeLine.intersect(top, &res) == QLineF::BoundedIntersection)
+    return res;
+  QLineF left(rect.topLeft(), rect.bottomLeft());
+  if (wholeLine.intersect(left, &res) == QLineF::BoundedIntersection)
+    return res;
+  QLineF right(rect.topRight(), rect.bottomRight());
+  if (wholeLine.intersect(right, &res) == QLineF::BoundedIntersection)
+    return res;
+  QLineF bottom(rect.bottomLeft(), rect.bottomRight());
+  if (wholeLine.intersect(bottom, &res))
+    return res;
+  Q_ASSERT_X(false, "Transition::getIntersection", "Given rectangle doesn't intersect with line");
+  return rect.center();
 }
 
 bool Transition::hasDestination() const
