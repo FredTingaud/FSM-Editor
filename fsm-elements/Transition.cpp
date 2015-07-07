@@ -74,7 +74,7 @@ QList<QPolygonF> Transition::calculateShape() const
   }
 }
 
-QList<QPolygonF> Transition::calculatePluggedArrow(QPainterPath &result, QPolygonF triangle) const
+QList<QPolygonF> Transition::calculatePluggedArrow(QPainterPath &result, const QPolygonF& triangle) const
 {
   QList<QPolygonF> polys;
   QPointF originPoint = getIntersection(mapFromItem(origin_, origin_->rect()).boundingRect());
@@ -100,7 +100,7 @@ void Transition::addBentLine(const QPointF& originPoint, const QLineF &line, con
   polys << arc.toSubpathPolygons(QTransform());
 }
 
-QList<QPolygonF> Transition::calculateMovingArrow(QPainterPath result, QPolygonF triangle) const
+QList<QPolygonF> Transition::calculateMovingArrow(QPainterPath result, const QPolygonF& triangle) const
 {
   QList<QPolygonF> polys;
   QPointF originPoint = mapFromItem(origin_, origin_->rect().topRight());
@@ -117,7 +117,7 @@ QList<QPolygonF> Transition::calculateMovingArrow(QPainterPath result, QPolygonF
   return polys;
 }
 
-QList<QPolygonF> Transition::calculateDangling(QPainterPath &result, QPolygonF triangle) const
+QList<QPolygonF> Transition::calculateDangling(QPainterPath &result, const QPolygonF& triangle) const
 {
   QTransform transformation;
   transformation.translate(origin_->rect().width(), 0.);

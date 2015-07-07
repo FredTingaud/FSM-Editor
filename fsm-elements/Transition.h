@@ -35,9 +35,9 @@ public:
 
 private:
 
-  QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, QPolygonF triangle) const;
-  QList<QPolygonF> calculateDangling(QPainterPath& result, QPolygonF triangle) const;
-  QList<QPolygonF> calculateMovingArrow(QPainterPath result, QPolygonF triangle) const;
+  QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle) const;
+  QList<QPolygonF> calculateDangling(QPainterPath& result, const QPolygonF& triangle) const;
+  QList<QPolygonF> calculateMovingArrow(QPainterPath result, const QPolygonF& triangle) const;
 
   void addBentLine(const QPointF& originPoint, const QLineF& line, const QPointF& destPoint, QList<QPolygonF>& polys) const;
 
