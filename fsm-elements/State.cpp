@@ -82,7 +82,10 @@ void State::keyPressEvent(QKeyEvent *event)
     pushStack_(new DeleteStateCommand(scene(), title_, pos()));
     event->accept();
   }
-  super::keyPressEvent(event);
+  else
+  {
+    super::keyPressEvent(event);
+  }
 }
 
 void State::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

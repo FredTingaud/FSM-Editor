@@ -13,7 +13,9 @@ AddStateCommand::AddStateCommand(FSMScene* scene, const QString& name, const QPo
 
 void AddStateCommand::undo()
 {
-  scene_->removeItem(scene_->itemAt(pos_, QTransform()));
+  QGraphicsItem * item = scene_->itemAt(pos_, QTransform());
+  scene_->removeItem(item);
+  delete item;
 }
 
 void AddStateCommand::redo()

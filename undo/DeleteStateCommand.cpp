@@ -13,7 +13,9 @@ DeleteStateCommand::DeleteStateCommand(FSMScene* scene, const QString& name, con
 
 void DeleteStateCommand::redo()
 {
-  scene_->removeItem(scene_->itemAt(pos_, QTransform()));
+  QGraphicsItem * item = scene_->itemAt(pos_, QTransform());
+  scene_->removeItem(item);
+  delete item;
 }
 
 void DeleteStateCommand::undo()
