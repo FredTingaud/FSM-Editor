@@ -1,6 +1,8 @@
 #include <fsm-editor/fsm-elements/Transition.h>
 
+#include <fsm-editor/FSMScene.h>
 #include <fsm-editor/fsm-elements/State.h>
+#include <fsm-editor/undo/ChangeTransition.h>
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -11,11 +13,23 @@ const qreal Transition::ARC = 25;
 const QColor Transition::LINK_COLOR = QColor(220, 80, 80);
 const QColor Transition::LINK_BORDER = QColor(210, 40, 40);
 
+Transition::Transition(State* origin, State* destination)
+  : origin_(origin)
+  , destination_(destination)
+{
+  initialize();
+}
+
 Transition::Transition(State* origin)
   : origin_(origin)
   , destination_(nullptr)
   , hovered_(isUnderMouse())
   , parentHovered_(false)
+{
+  initialize();
+}
+
+void Transition::initialize()
 {
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
   initPos();
@@ -204,10 +218,10 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     State* child = dynamic_cast<State*>(item);
     if (child != nullptr)
     {
-      destination_ = child;
+      origin_->pushCommand(new ChangeTransition(static_cast<FSMScene*>(scene()), origin_->title(), child->title()));
+      initPos();
       break;
     }
   }
-  initPos();
   super::mouseReleaseEvent(event);
 }

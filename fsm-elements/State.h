@@ -1,12 +1,13 @@
 #pragma once
 
+#include <fsm-editor/fsm-elements/Transition.h>
+
 #include <functional>
 
 #include <QGraphicsRectItem>
 #include <QUndoCommand>
 
 class FSMScene;
-class Transition;
 
 class State : public QGraphicsRectItem
 {
@@ -33,7 +34,10 @@ public:
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
   FSMScene* scene() const;
+  void pushCommand(QUndoCommand* command);
 
+  void transitionTo(State* destination);
+  void RemoveTransitionTo(State* destination);
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
@@ -46,5 +50,6 @@ private:
   QString content_;
   std::function<void(QUndoCommand*)> pushStack_;
   bool silent_;
+  Transition dangling_;
   QList<Transition*> transitions_;
 };

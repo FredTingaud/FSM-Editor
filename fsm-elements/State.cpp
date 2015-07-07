@@ -19,6 +19,7 @@ State::State(const QString& title, const QPointF& position, std::function<void(Q
   , title_(title)
   , pushStack_(std::move(pushStack))
   , silent_(false)
+  , dangling_(this)
 {
   setPen(PEN_COLOR);
   setPos(position);
@@ -72,7 +73,16 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
     {
       child->initPos();
     }
+    dangling_.initPos();
     pushStack_(new MoveStateCommand(scene(), title_, value.toPointF(), this));
+  }
+  else if (change == QGraphicsItem::ItemSceneHasChanged)
+  {
+    if (scene())
+    {
+      dangling_.initPos();
+      scene()->addItem(&dangling_);
+    }
   }
   return result;
 }
@@ -102,19 +112,13 @@ void State::keyPressEvent(QKeyEvent *event)
 
 void State::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-  if (transitions_.isEmpty() || transitions_.last()->hasDestination())
-  {
-    Transition* danglingTransition = new Transition(this);
-    transitions_.append(danglingTransition);
-    scene()->addItem(danglingTransition);
-  }
-  transitions_.last()->setParentOvered(true);
+  dangling_.setParentOvered(true);
   super::hoverEnterEvent(event);
 }
 
 void State::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-  transitions_.last()->setParentOvered(false);
+  dangling_.setParentOvered(false);
   super::hoverLeaveEvent(event);
 }
 
@@ -123,4 +127,36 @@ FSMScene* State::scene() const
   if (super::scene())
     return static_cast<FSMScene*>(super::scene());
   return nullptr;
+}
+
+void State::pushCommand(QUndoCommand* command)
+{
+  pushStack_(command);
+}
+
+void State::transitionTo(State* destination)
+{
+  for (Transition* t : transitions_)
+  {
+    if (t->destination() == destination)
+    {
+      return;
+    }
+  }
+  Transition* transition = new Transition(this, destination);
+  transitions_.append(transition);
+  scene()->addItem(transition);
+}
+
+void State::RemoveTransitionTo(State* destination)
+{
+  for (Transition* t : transitions_)
+  {
+    if (t->destination() == destination)
+    {
+      transitions_.removeOne(t);
+      delete t;
+      return;
+    }
+  }
 }

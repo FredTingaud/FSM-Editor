@@ -10,6 +10,10 @@ class Transition : public QGraphicsItem
 public:
   Transition(State* origin);
 
+  Transition(State* origin, State* destination);
+
+  void initialize();
+
   void initPos();
 
   bool isDangling() const;
