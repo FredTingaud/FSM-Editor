@@ -38,6 +38,9 @@ public:
 
   void transitionTo(State* destination);
   void removeTransitionTo(State* destination);
+
+  void setPointedBy(Transition* transition, bool pointed);
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
@@ -52,4 +55,5 @@ private:
   bool silent_;
   Transition dangling_;
   QList<Transition*> transitions_;
+  QList<Transition*> pointingTransitions_;
 };

@@ -40,6 +40,7 @@ void Transition::initialize()
 
 void Transition::initPos()
 {
+  prepareGeometryChange();
   setPos(origin_->pos());
 }
 

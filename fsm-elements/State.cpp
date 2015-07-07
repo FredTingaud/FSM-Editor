@@ -73,6 +73,10 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
     {
       child->initPos();
     }
+    for (Transition* child : pointingTransitions_)
+    {
+      child->initPos();
+    }
     dangling_.initPos();
     pushStack_(new MoveStateCommand(scene(), title_, value.toPointF(), this));
   }
@@ -146,6 +150,7 @@ void State::transitionTo(State* destination)
   Transition* transition = new Transition(this, destination);
   transitions_.append(transition);
   scene()->addItem(transition);
+  destination->setPointedBy(transition, true);
 }
 
 void State::removeTransitionTo(State* destination)
@@ -155,8 +160,21 @@ void State::removeTransitionTo(State* destination)
     if (t->destination() == destination)
     {
       transitions_.removeOne(t);
+      destination->setPointedBy(t, false);
       delete t;
       return;
     }
+  }
+}
+
+void State::setPointedBy(Transition* transition, bool pointed)
+{
+  if (pointed)
+  {
+    pointingTransitions_.append(transition);
+  }
+  else
+  {
+    pointingTransitions_.removeOne(transition);
   }
 }
