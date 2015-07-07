@@ -12,7 +12,7 @@ class State : public QGraphicsRectItem
 {
   using super = QGraphicsRectItem;
 public:
-  State(QString title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack);
+  State(const QString& title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack);
 
   virtual ~State();
 

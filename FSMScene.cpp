@@ -23,3 +23,23 @@ void FSMScene::pushCommand(QUndoCommand* undoCommand)
 {
   command(undoCommand);
 }
+
+void FSMScene::addState(const QString& name, const QPointF& pos)
+{
+  State* item = new State(name, pos, [&](QUndoCommand* command){this->pushCommand(command); });
+  states_.insert(std::pair<QString, State*>(name, item));
+  addItem(item);
+}
+
+void FSMScene::removeState(const QString& name)
+{
+  State* item = states_.at(name);
+  states_.erase(states_.find(name));
+  removeItem(item);
+  delete item;
+}
+
+State* FSMScene::getState(const QString& name) const
+{
+  return states_.at(name);
+}

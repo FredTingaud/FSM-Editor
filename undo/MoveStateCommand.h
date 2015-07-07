@@ -3,13 +3,13 @@
 #include <QUndoCommand>
 #include <QPointF>
 
-class QGraphicsScene;
+class FSMScene;
 class State;
 
 class MoveStateCommand : public QUndoCommand
 {
 public:
-  MoveStateCommand(QGraphicsScene* scene, const QString& name, const QPointF& position, State* state);
+  MoveStateCommand(FSMScene* scene, const QString& name, const QPointF& position, State* state);
 
   virtual void undo() override;
 
@@ -19,11 +19,9 @@ public:
 
   virtual bool mergeWith(const QUndoCommand *other) override;
 
-  State* findState(const QPointF& position);
-
 private:
   bool first_;
-  QGraphicsScene* scene_;
+  FSMScene* scene_;
   QString name_;
   QPointF previousPos_;
   QPointF newPos_;

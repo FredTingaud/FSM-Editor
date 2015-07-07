@@ -13,13 +13,11 @@ AddStateCommand::AddStateCommand(FSMScene* scene, const QString& name, const QPo
 
 void AddStateCommand::undo()
 {
-  QGraphicsItem * item = scene_->itemAt(pos_, QTransform());
-  scene_->removeItem(item);
-  delete item;
+  scene_->removeState(name_);
 }
 
 void AddStateCommand::redo()
 {
   FSMScene* copy = scene_;
-  scene_->addItem(new State(name_, pos_, [=](QUndoCommand* command){copy->pushCommand(command); }));
+  scene_->addState(name_, pos_);
 }

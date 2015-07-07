@@ -2,7 +2,7 @@
 #include <fsm-editor/FSMScene.h>
 #include <fsm-editor/fsm-elements/State.h>
 
-MoveStateCommand::MoveStateCommand(QGraphicsScene* scene, const QString& name, const QPointF& position, State* state)
+MoveStateCommand::MoveStateCommand(FSMScene* scene, const QString& name, const QPointF& position, State* state)
   : QUndoCommand(QString("Move state %1").arg(name))
   , first_(true)
   , scene_(scene)
@@ -13,7 +13,7 @@ MoveStateCommand::MoveStateCommand(QGraphicsScene* scene, const QString& name, c
 
 void MoveStateCommand::undo()
 {
-  State* state = findState(newPos_);
+  State* state = scene_->getState(name_);
   state->setSilentMove(true);
   state->setPos(previousPos_);
   state->setSilentMove(false);
@@ -27,7 +27,7 @@ void MoveStateCommand::redo()
   }
   else
   {
-    State* state = findState(previousPos_);
+    State* state = scene_->getState(name_);
     state->setSilentMove(true);
     state->setPos(newPos_);
     state->setSilentMove(false);
@@ -48,15 +48,4 @@ bool MoveStateCommand::mergeWith(const QUndoCommand *other)
       return false;
   newPos_ = static_cast<const MoveStateCommand*>(other)->newPos_;
   return true;
-}
-
-State* MoveStateCommand::findState(const QPointF& position)
-{
-  QGraphicsItem* item = scene_->itemAt(position, QTransform());
-  State* state = dynamic_cast<State*>(item);
-  if (state != nullptr && state->title() == name_)
-  {
-    return state;
-  }
-  throw std::exception(qPrintable("State not found: " + name_));
 }

@@ -14,7 +14,7 @@ const qreal State::H_MARGIN = 4;
 const qreal State::V_MARGIN = 4;
 const QColor State::PEN_COLOR = QColor(190, 190, 190);
 
-State::State(QString title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
+State::State(const QString& title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
   , title_(title)
   , pushStack_(std::move(pushStack))
