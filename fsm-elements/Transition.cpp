@@ -103,7 +103,7 @@ void Transition::addBentLine(const QPointF& originPoint, const QLineF &line, con
 QList<QPolygonF> Transition::calculateMovingArrow(QPainterPath result, QPolygonF triangle) const
 {
   QList<QPolygonF> polys;
-  QPointF originPoint = getIntersection(mapFromItem(origin_, origin_->rect()).boundingRect());
+  QPointF originPoint = mapFromItem(origin_, origin_->rect().topRight());
   QPointF destPoint = mapFromScene(movingPos_);
   QLineF line(originPoint, destPoint);
   QPolygonF linePoly;
