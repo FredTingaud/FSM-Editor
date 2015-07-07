@@ -14,6 +14,8 @@ class State : public QGraphicsRectItem
 public:
   State(QString title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack);
 
+  virtual ~State();
+
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 
   void shrinkTextToFit(QPainter * painter);

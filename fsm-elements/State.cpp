@@ -26,6 +26,18 @@ State::State(QString title, const QPointF& position, std::function<void(QUndoCom
   setAcceptHoverEvents(true);
 }
 
+State::~State()
+{
+  for (Transition* transition : transitions_)
+  {
+    if (transition->scene())
+    {
+      transition->scene()->removeItem(transition);
+    }
+    delete transition;
+  }
+}
+
 void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget /*= 0*/)
 {
   super::paint(painter, option, widget);
