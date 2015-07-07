@@ -37,6 +37,8 @@ public:
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
+  virtual void keyPressEvent(QKeyEvent *event) override;
+
 private:
 
   QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle) const;

@@ -45,10 +45,12 @@ set(allSRCS
     fsm-elements/Transition.h
     undo/AddStateCommand.cpp
     undo/AddStateCommand.h
-    undo/ChangeTransition.cpp
-    undo/ChangeTransition.h
+    undo/AddTransition.cpp
+    undo/AddTransition.h
     undo/DeleteStateCommand.cpp
     undo/DeleteStateCommand.h
+    undo/DeleteTransition.cpp
+    undo/DeleteTransition.h
     undo/MoveStateCommand.cpp
     undo/MoveStateCommand.h
     )

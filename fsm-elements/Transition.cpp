@@ -2,11 +2,13 @@
 
 #include <fsm-editor/FSMScene.h>
 #include <fsm-editor/fsm-elements/State.h>
-#include <fsm-editor/undo/ChangeTransition.h>
+#include <fsm-editor/undo/AddTransition.h>
+#include <fsm-editor/undo/DeleteTransition.h>
 
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 
 const qreal Transition::LINK_SIZE = 8;
 const qreal Transition::ARC = 25;
@@ -60,7 +62,14 @@ QRectF Transition::boundingRect() const
 void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget /*= 0*/)
 {
   painter->setBrush(LINK_COLOR);
-  painter->setPen(LINK_BORDER);
+  if (isSelected())
+  {
+    painter->setPen(Qt::white);
+  }
+  else
+  {
+    painter->setPen(LINK_BORDER);
+  }
   QList<QPolygonF> shape = calculateShape();
   for (QPolygonF poly : shape)
   {
@@ -218,10 +227,23 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     State* child = dynamic_cast<State*>(item);
     if (child != nullptr)
     {
-      origin_->pushCommand(new ChangeTransition(static_cast<FSMScene*>(scene()), origin_->title(), child->title()));
+      origin_->pushCommand(new AddTransition(static_cast<FSMScene*>(scene()), origin_->title(), child->title()));
       initPos();
       break;
     }
   }
   super::mouseReleaseEvent(event);
+}
+
+void Transition::keyPressEvent(QKeyEvent *event)
+{
+  if (destination_ != nullptr && event->key() == Qt::Key_Delete)
+  {
+    origin_->pushCommand(new DeleteTransition(static_cast<FSMScene*>(scene()), origin_->title(), destination_->title()));
+    event->accept();
+  }
+  else
+  {
+    super::keyPressEvent(event);
+  }
 }

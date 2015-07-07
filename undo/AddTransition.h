@@ -3,10 +3,10 @@
 #include <QUndoCommand>
 
 class FSMScene;
-class ChangeTransition : public QUndoCommand
+class AddTransition : public QUndoCommand
 {
 public:
-  ChangeTransition(FSMScene* scene, const QString& origin, const QString& destination);
+  AddTransition(FSMScene* scene, const QString& origin, const QString& destination);
 
   virtual void undo() override;
 
