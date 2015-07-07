@@ -148,7 +148,7 @@ void State::transitionTo(State* destination)
   scene()->addItem(transition);
 }
 
-void State::RemoveTransitionTo(State* destination)
+void State::removeTransitionTo(State* destination)
 {
   for (Transition* t : transitions_)
   {

@@ -14,7 +14,7 @@ void AddTransition::undo()
 {
   State* origin = scene_->getState(origin_);
   State* destination = scene_->getState(destination_);
-  origin->RemoveTransitionTo(destination);
+  origin->removeTransitionTo(destination);
 }
 
 void AddTransition::redo()

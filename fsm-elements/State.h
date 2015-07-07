@@ -37,7 +37,7 @@ public:
   void pushCommand(QUndoCommand* command);
 
   void transitionTo(State* destination);
-  void RemoveTransitionTo(State* destination);
+  void removeTransitionTo(State* destination);
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
