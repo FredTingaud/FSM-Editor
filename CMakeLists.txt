@@ -39,6 +39,8 @@ set(allSRCS
     FSMEditor.h
     FSMScene.cpp
     FSMScene.h
+    fsm-elements/FSMElement.cpp
+    fsm-elements/FSMElement.h
     fsm-elements/State.cpp
     fsm-elements/State.h
     fsm-elements/Transition.cpp
@@ -53,6 +55,8 @@ set(allSRCS
     undo/DeleteTransition.h
     undo/MoveStateCommand.cpp
     undo/MoveStateCommand.h
+    undo/UpdateCode.cpp
+    undo/UpdateCode.h
     )
 
 set(linkLibraries

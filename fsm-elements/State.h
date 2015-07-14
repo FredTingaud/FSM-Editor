@@ -1,15 +1,17 @@
 #pragma once
 
+#include <fsm-editor/fsm-elements/FSMElement.h>
+#include <QGraphicsRectItem>
+
 #include <fsm-editor/fsm-elements/Transition.h>
 
 #include <functional>
 
-#include <QGraphicsRectItem>
 #include <QUndoCommand>
 
 class FSMScene;
 
-class State : public QGraphicsRectItem
+class State : public QGraphicsRectItem, public FSMElement
 {
   using super = QGraphicsRectItem;
 public:
@@ -27,7 +29,7 @@ public:
 
   void setSilentMove(bool silent);
 
-  QString title() const;
+  virtual QString name() const override;
 
   virtual void keyPressEvent(QKeyEvent *event) override;
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -41,6 +43,8 @@ public:
 
   void setPointedBy(Transition* transition, bool pointed);
 
+  virtual void setCode(const QString& code) override;
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
@@ -50,7 +54,6 @@ private:
 
 private:
   QString title_;
-  QString content_;
   std::function<void(QUndoCommand*)> pushStack_;
   bool silent_;
   Transition dangling_;

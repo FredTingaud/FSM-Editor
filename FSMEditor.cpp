@@ -8,8 +8,9 @@
 FSMEditor::FSMEditor()
   : fsmView_(&scene_, this)
 {
+  makeLuaEditor();
   addWidget(makeViewPanel());
-  addWidget(makeLuaEditor());
+  addWidget(editor_);
 
   connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
 }
@@ -29,11 +30,27 @@ void FSMEditor::stackCommand(QUndoCommand* command)
   undoStack_.push(command);
 }
 
-QWidget* FSMEditor::makeLuaEditor()
+void FSMEditor::makeLuaEditor()
 {
-  QPlainTextEdit* editor = new QPlainTextEdit(this);
-  editor->setPlainText("function sample code");
-  return editor;
+  editor_ = new QPlainTextEdit(this);
+  editor_->setPlainText("function sample code");
+  connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
+  connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
+}
+
+void FSMEditor::displaySetCode(const QString& code)
+{
+  if (editor_->toPlainText() != code)
+  {
+    editor_->blockSignals(true);
+    editor_->setPlainText(code);
+    editor_->blockSignals(false);
+  }
+}
+
+void FSMEditor::transferCodeChanged()
+{
+  scene_.updateCode(editor_->toPlainText());
 }
 
 QWidget* FSMEditor::makeViewPanel()

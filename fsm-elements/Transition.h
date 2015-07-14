@@ -1,10 +1,11 @@
 #pragma once
 
+#include <fsm-editor/fsm-elements/FSMElement.h>
+
 #include<QGraphicsItem>
 
 class State;
-
-class Transition : public QGraphicsItem
+class Transition : public QGraphicsItem, public FSMElement
 {
   using super = QGraphicsItem;
 public:
@@ -50,6 +51,8 @@ private:
   QPointF getIntersection(const QRectF& rect) const;
 
   void updateVisibility();
+
+  virtual QString name() const override;
 
 private:
   static const qreal LINK_SIZE;

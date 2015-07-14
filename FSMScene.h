@@ -4,6 +4,7 @@
 
 class QUndoCommand;
 class State;
+class FSMElement;
 
 class FSMScene : public QGraphicsScene
 {
@@ -16,14 +17,20 @@ public:
   void pushCommand(QUndoCommand* command);
 
   Q_SIGNAL void command(QUndoCommand* command);
+  Q_SIGNAL void codeChanged(const QString& code);
 
   void addState(const QString& name, const QPointF& pos);
   void removeState(const QString& name);
   State* getState(const QString& name) const;
+
+  void setCode(FSMElement* element, const QString& code);
+  void updateCode(const QString& code);
+
 public:
   enum UNDO_IDS
   {
-    UNDO_MOVE = 1
+    UNDO_MOVE = 1,
+    UNDO_CODE = 2
   };
 
 private:
@@ -32,4 +39,5 @@ private:
 
 private:
   std::map<QString, State*> states_;
+  FSMElement* editingElement_;
 };

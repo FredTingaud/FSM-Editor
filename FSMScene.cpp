@@ -2,6 +2,7 @@
 
 #include<fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddStateCommand.h>
+#include <fsm-editor/undo/UpdateCode.h>
 
 #include<QGraphicsSceneMouseEvent>
 #include <QUndoCommand>
@@ -10,6 +11,7 @@ int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
 
 FSMScene::FSMScene()
+  : editingElement_(nullptr)
 {
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
 }
@@ -42,4 +44,15 @@ void FSMScene::removeState(const QString& name)
 State* FSMScene::getState(const QString& name) const
 {
   return states_.at(name);
+}
+
+void FSMScene::setCode(FSMElement* element, const QString& code)
+{
+  editingElement_ = element;
+  Q_EMIT codeChanged(code);
+}
+
+void FSMScene::updateCode(const QString& code)
+{
+  pushCommand(new UpdateCode(this, editingElement_->name(), code));
 }

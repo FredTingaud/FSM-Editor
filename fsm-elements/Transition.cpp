@@ -198,6 +198,15 @@ void Transition::updateVisibility()
   setVisible(destination_ != nullptr || parentHovered_ || hovered_);
 }
 
+QString Transition::name() const
+{
+  if (destination_ == nullptr)
+  {
+    return origin_->name() + " dangling transition";
+  }
+  return origin_->name() + " to " + destination_->name() + " transition";
+}
+
 void Transition::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
   hovered_ = true;
@@ -226,9 +235,9 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   for (QGraphicsItem* item : items)
   {
     State* child = dynamic_cast<State*>(item);
-    if (child != nullptr)
+    if (child != nullptr && child != origin_)
     {
-      origin_->pushCommand(new AddTransition(static_cast<FSMScene*>(scene()), origin_->title(), child->title()));
+      origin_->pushCommand(new AddTransition(static_cast<FSMScene*>(scene()), origin_->name(), child->name()));
       initPos();
       break;
     }
@@ -240,7 +249,7 @@ void Transition::keyPressEvent(QKeyEvent *event)
 {
   if (destination_ != nullptr && event->key() == Qt::Key_Delete)
   {
-    origin_->pushCommand(new DeleteTransition(static_cast<FSMScene*>(scene()), origin_->title(), destination_->title()));
+    origin_->pushCommand(new DeleteTransition(static_cast<FSMScene*>(scene()), origin_->name(), destination_->name()));
     event->accept();
   }
   else

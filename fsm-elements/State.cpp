@@ -88,6 +88,13 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
       scene()->addItem(&dangling_);
     }
   }
+  else if (change == QGraphicsItem::ItemSelectedChange)
+  {
+    if (value.toBool())
+    {
+      scene()->setCode(this, getCode());
+    }
+  }
   return result;
 }
 
@@ -96,7 +103,7 @@ void State::setSilentMove(bool silent)
   silent_ = silent;
 }
 
-QString State::title() const
+QString State::name() const
 {
   return title_;
 }
@@ -177,4 +184,11 @@ void State::setPointedBy(Transition* transition, bool pointed)
   {
     pointingTransitions_.removeOne(transition);
   }
+}
+
+void State::setCode(const QString& code)
+{
+  FSMElement::setCode(code);
+  setSelected(false);
+  setSelected(true);
 }

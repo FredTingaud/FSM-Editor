@@ -9,6 +9,7 @@
 
 class QToolBar;
 class QUndoCommand;
+class QPlainTextEdit;
 
 class FSMEditor : public QSplitter
 {
@@ -19,17 +20,22 @@ public:
   Q_SLOT void zoomIn();
   Q_SLOT void zoomOut();
 
+private:
   Q_SLOT void stackCommand(QUndoCommand* command);
+  Q_SLOT void transferCodeChanged();
+  Q_SLOT void displaySetCode(const QString& code);
+
 private:
   QWidget* makeViewPanel();
 
   void createSceneActions(QToolBar* toolbar);
 
-  QWidget* makeLuaEditor();
+  void makeLuaEditor();
 
 private:
   FSMScene scene_;
   QGraphicsView fsmView_;
 
   QUndoStack undoStack_;
+  QPlainTextEdit* editor_;
 };
