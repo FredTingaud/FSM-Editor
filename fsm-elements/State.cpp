@@ -189,6 +189,6 @@ void State::setPointedBy(Transition* transition, bool pointed)
 void State::setCode(const QString& code)
 {
   FSMElement::setCode(code);
-  setSelected(false);
+  scene()->clearSelection();
   setSelected(true);
 }
