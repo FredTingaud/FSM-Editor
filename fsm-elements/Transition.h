@@ -41,6 +41,12 @@ public:
 
   virtual void keyPressEvent(QKeyEvent *event) override;
 
+  void setCode(const QString& code);
+  virtual QString name() const override;
+
+  virtual QString visit(ExportVisitor& visitor) const override;
+
+
 private:
 
   QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle) const;
@@ -53,10 +59,9 @@ private:
 
   void updateVisibility();
 
-  virtual QString name() const override;
+  virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
   FSMScene* fsmScene() const;
-  virtual QString visit(ExportVisitor& visitor) const override;
 
 private:
   static const qreal LINK_SIZE;

@@ -199,6 +199,19 @@ void Transition::updateVisibility()
   setVisible(destination_ != nullptr || parentHovered_ || hovered_);
 }
 
+QVariant Transition::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+  auto result = super::itemChange(change, value);
+  if (change == QGraphicsItem::ItemSelectedChange)
+  {
+    if (value.toBool())
+    {
+      fsmScene()->setCode(this, getCode());
+    }
+  }
+  return result;
+}
+
 FSMScene* Transition::fsmScene() const
 {
   if (super::scene())
@@ -265,11 +278,18 @@ void Transition::keyPressEvent(QKeyEvent *event)
 {
   if (destination_ != nullptr && event->key() == Qt::Key_Delete)
   {
-    origin_->pushCommand(new DeleteTransition(static_cast<FSMScene*>(scene()), origin_->name(), destination_->name()));
+    origin_->pushCommand(new DeleteTransition(fsmScene(), origin_->name(), destination_->name()));
     event->accept();
   }
   else
   {
     super::keyPressEvent(event);
   }
+}
+
+void Transition::setCode(const QString& code)
+{
+  FSMElement::setCode(code);
+  scene()->clearSelection();
+  setSelected(true);
 }

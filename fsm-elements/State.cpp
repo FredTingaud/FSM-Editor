@@ -159,6 +159,8 @@ void State::transitionTo(State* destination)
   transitions_.append(transition);
   scene()->addItem(transition);
   destination->setPointedBy(transition, true);
+  scene()->clearSelection();
+  transition->setSelected(true);
 }
 
 void State::removeTransitionTo(State* destination)
@@ -192,6 +194,16 @@ void State::setCode(const QString& code)
   FSMElement::setCode(code);
   scene()->clearSelection();
   setSelected(true);
+}
+
+FSMElement* State::getElement(const QString& name) const
+{
+  for (Transition* transition : transitions_)
+  {
+    if (transition->name() == name)
+      return transition;
+  }
+  return nullptr;
 }
 
 QString State::visit(ExportVisitor& visitor) const

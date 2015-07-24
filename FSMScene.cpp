@@ -46,6 +46,21 @@ State* FSMScene::getState(const QString& name) const
   return states_.at(name);
 }
 
+FSMElement* FSMScene::getElement(const QString& name) const
+{
+  if (states_.count(name))
+    return states_.at(name);
+  for (auto&& it : states_)
+  {
+    auto element = it.second->getElement(name);
+    if (element != nullptr)
+    {
+      return element;
+    }
+  }
+  return nullptr;
+}
+
 void FSMScene::setCode(FSMElement* element, const QString& code)
 {
   editingElement_ = element;

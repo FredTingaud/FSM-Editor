@@ -5,21 +5,21 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 UpdateCode::UpdateCode(FSMScene* scene, const QString& element, const QString& newCode)
-  : QUndoCommand(QString("Change code for %1").arg(scene->getState(element)->name()))
+  : QUndoCommand(QString("Change code for %1").arg(scene->getElement(element)->name()))
   , scene_(scene)
   , element_(element)
-  , previousCode_(scene->getState(element)->getCode())
+  , previousCode_(scene->getElement(element)->getCode())
   , nextCode_(newCode)
 {}
 
 void UpdateCode::undo()
 {
-  scene_->getState(element_)->setCode(previousCode_);
+  scene_->getElement(element_)->setCode(previousCode_);
 }
 
 void UpdateCode::redo()
 {
-  scene_->getState(element_)->setCode(nextCode_);
+  scene_->getElement(element_)->setCode(nextCode_);
 }
 
 int UpdateCode::id() const

@@ -45,6 +45,8 @@ public:
 
   virtual void setCode(const QString& code) override;
 
+  FSMElement* getElement(const QString& name) const;
+
   virtual QString visit(ExportVisitor& visitor) const override;
 
 private:

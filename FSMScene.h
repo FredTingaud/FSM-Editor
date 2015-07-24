@@ -22,7 +22,8 @@ public:
   void addState(const QString& name, const QPointF& pos);
   void removeState(const QString& name);
   State* getState(const QString& name) const;
-
+  FSMElement* getElement(const QString& name) const;
+ 
   void setCode(FSMElement* element, const QString& code);
   void updateCode(const QString& code);
 
