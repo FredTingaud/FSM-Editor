@@ -5,6 +5,7 @@
 #include<QGraphicsItem>
 
 class State;
+class FSMScene;
 class Transition : public QGraphicsItem, public FSMElement
 {
   using super = QGraphicsItem;
@@ -54,6 +55,7 @@ private:
 
   virtual QString name() const override;
 
+  FSMScene* fsmScene() const;
   virtual QString visit(ExportVisitor& visitor) const override;
 
 private:

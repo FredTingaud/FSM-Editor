@@ -199,6 +199,13 @@ void Transition::updateVisibility()
   setVisible(destination_ != nullptr || parentHovered_ || hovered_);
 }
 
+FSMScene* Transition::fsmScene() const
+{
+  if (super::scene())
+    return static_cast<FSMScene*>(super::scene());
+  return nullptr;
+}
+
 QString Transition::name() const
 {
   if (destination_ == nullptr)
@@ -237,15 +244,18 @@ void Transition::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   movingPos_ = QPointF();
-  QList<QGraphicsItem*> items = scene()->collidingItems(this);
-  for (QGraphicsItem* item : items)
+  if (destination_ == nullptr)
   {
-    State* child = dynamic_cast<State*>(item);
-    if (child != nullptr && child != origin_)
+    QList<QGraphicsItem*> items = scene()->collidingItems(this);
+    for (QGraphicsItem* item : items)
     {
-      origin_->pushCommand(new AddTransition(static_cast<FSMScene*>(scene()), origin_->name(), child->name()));
-      initPos();
-      break;
+      State* child = dynamic_cast<State*>(item);
+      if (child != nullptr && child != origin_)
+      {
+        origin_->pushCommand(new AddTransition(fsmScene(), origin_->name(), child->name()));
+        initPos();
+        break;
+      }
     }
   }
   super::mouseReleaseEvent(event);
