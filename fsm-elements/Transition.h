@@ -54,6 +54,8 @@ private:
 
   virtual QString name() const override;
 
+  virtual QString visit(ExportVisitor& visitor) const override;
+
 private:
   static const qreal LINK_SIZE;
   static const qreal ARC;

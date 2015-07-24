@@ -1,5 +1,6 @@
 #include <fsm-editor/fsm-elements/Transition.h>
 
+#include <fsm-editor/ExportVisitor.h>
 #include <fsm-editor/FSMScene.h>
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddTransition.h>
@@ -205,6 +206,11 @@ QString Transition::name() const
     return origin_->name() + " dangling transition";
   }
   return origin_->name() + " to " + destination_->name() + " transition";
+}
+
+QString Transition::visit(ExportVisitor& visitor) const
+{
+  return visitor.exportElement(*this);
 }
 
 void Transition::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

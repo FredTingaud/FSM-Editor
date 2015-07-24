@@ -45,6 +45,8 @@ public:
 
   virtual void setCode(const QString& code) override;
 
+  virtual QString visit(ExportVisitor& visitor) const override;
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;

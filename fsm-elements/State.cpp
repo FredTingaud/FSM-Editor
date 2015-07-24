@@ -1,6 +1,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/fsm-elements/Transition.h>
 #include <fsm-editor/FSMScene.h>
+#include <fsm-editor/ExportVisitor.h>
 #include <fsm-editor/undo/MoveStateCommand.h>
 #include <fsm-editor/undo/DeleteStateCommand.h>
 
@@ -191,4 +192,9 @@ void State::setCode(const QString& code)
   FSMElement::setCode(code);
   scene()->clearSelection();
   setSelected(true);
+}
+
+QString State::visit(ExportVisitor& visitor) const
+{
+  return visitor.exportElement(*this);
 }

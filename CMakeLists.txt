@@ -35,6 +35,7 @@ set(CMAKE_AUTOMOC ON)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 set(allSRCS
+    ExportVisitor.h
     FSMEditor.cpp
     FSMEditor.h
     FSMScene.cpp
