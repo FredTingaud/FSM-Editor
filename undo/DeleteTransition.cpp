@@ -8,13 +8,17 @@ DeleteTransition::DeleteTransition(FSMScene* scene, const QString& origin, const
   , scene_(scene)
   , origin_(origin)
   , destination_(destination)
-{}
+{
+  State* originState = scene_->getState(origin_);
+  State* destinationState = scene_->getState(destination_);
+  code_ = originState->getTransitionTo(destinationState)->getCode();
+}
 
 void DeleteTransition::undo()
 {
   State* origin = scene_->getState(origin_);
   State* destination = scene_->getState(destination_);
-  origin->transitionTo(destination);
+  origin->transitionTo(destination, code_);
 }
 
 void DeleteTransition::redo()

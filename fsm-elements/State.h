@@ -38,8 +38,9 @@ public:
   FSMScene* scene() const;
   void pushCommand(QUndoCommand* command);
 
-  void transitionTo(State* destination);
+  void transitionTo(State* destination, const QString& code = "");
   void removeTransitionTo(State* destination);
+  Transition* getTransitionTo(State* destinationState) const;
 
   void setPointedBy(Transition* transition, bool pointed);
 
@@ -48,7 +49,6 @@ public:
   FSMElement* getElement(const QString& name) const;
 
   virtual QString visit(ExportVisitor& visitor) const override;
-
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;

@@ -16,4 +16,5 @@ private:
   FSMScene* scene_;
   QString origin_;
   QString destination_;
+  QString code_;
 };

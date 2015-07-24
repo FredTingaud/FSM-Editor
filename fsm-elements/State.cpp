@@ -146,7 +146,7 @@ void State::pushCommand(QUndoCommand* command)
   pushStack_(command);
 }
 
-void State::transitionTo(State* destination)
+void State::transitionTo(State* destination, const QString& code /*= ""*/)
 {
   for (Transition* t : transitions_)
   {
@@ -159,22 +159,15 @@ void State::transitionTo(State* destination)
   transitions_.append(transition);
   scene()->addItem(transition);
   destination->setPointedBy(transition, true);
-  scene()->clearSelection();
-  transition->setSelected(true);
+  transition->setCode(code);
 }
 
 void State::removeTransitionTo(State* destination)
 {
-  for (Transition* t : transitions_)
-  {
-    if (t->destination() == destination)
-    {
-      transitions_.removeOne(t);
-      destination->setPointedBy(t, false);
-      delete t;
-      return;
-    }
-  }
+  Transition* t = getTransitionTo(destination);
+  transitions_.removeOne(t);
+  destination->setPointedBy(t, false);
+  delete t;
 }
 
 void State::setPointedBy(Transition* transition, bool pointed)
@@ -209,4 +202,16 @@ FSMElement* State::getElement(const QString& name) const
 QString State::visit(ExportVisitor& visitor) const
 {
   return visitor.exportElement(*this);
+}
+
+Transition* State::getTransitionTo(State* destination) const
+{
+  for (Transition* t : transitions_)
+  {
+    if (t->destination() == destination)
+    {
+      return t;
+    }
+  }
+  return nullptr;
 }
