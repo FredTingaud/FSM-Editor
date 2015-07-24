@@ -29,6 +29,8 @@ public:
   QPointF destinationPoint() const;
 
   bool hasDestination() const;
+
+  State* origin() const;
   State* destination() const;
 
   void setParentOvered(bool hovered);
@@ -45,7 +47,6 @@ public:
   virtual QString name() const override;
 
   virtual QString visit(ExportVisitor& visitor) const override;
-
 
 private:
 

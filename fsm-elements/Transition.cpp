@@ -183,6 +183,11 @@ bool Transition::hasDestination() const
   return destination_ != nullptr;
 }
 
+State* Transition::origin() const
+{
+  return origin_;
+}
+
 State* Transition::destination() const
 {
   return destination_;

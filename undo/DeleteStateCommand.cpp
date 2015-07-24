@@ -1,23 +1,41 @@
 #include <fsm-editor/undo/DeleteStateCommand.h>
+#include <fsm-editor/undo/DeleteTransition.h>
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/FSMScene.h>
 
 #include <QTransform>
 
-DeleteStateCommand::DeleteStateCommand(FSMScene* scene, const QString& name, const QPointF& position)
-  : QUndoCommand(QString("Delete state %1").arg(name))
+DeleteStateCommand::DeleteStateCommand(FSMScene* scene, State* state)
+  : QUndoCommand(QString("Delete state %1").arg(state->name()))
   , scene_(scene)
-  , name_(name)
-  , pos_(position)
-{}
+  , name_(state->name())
+  , pos_(state->pos())
+  , code_(state->getCode())
+{
+  for (Transition* t : state->getAllRelatedTransitions())
+  {
+    if (t->hasDestination())
+    {
+      deleteTransitions_.append(new DeleteTransition(scene, t->origin()->name(), t->destination()->name()));
+    }
+  }
+}
 
 void DeleteStateCommand::redo()
 {
+  for (auto command : deleteTransitions_)
+  {
+    command->redo();
+  }
   scene_->removeState(name_);
 }
 
 void DeleteStateCommand::undo()
 {
-  FSMScene* copy = scene_;
-  scene_->addState(name_, pos_);
+  auto state = scene_->addState(name_, pos_);
+  for (auto command : deleteTransitions_)
+  {
+    command->undo();
+  }
+  state->setCode(code_);
 }

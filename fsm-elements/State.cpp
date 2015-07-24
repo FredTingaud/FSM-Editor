@@ -113,7 +113,7 @@ void State::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_Delete)
   {
-    pushStack_(new DeleteStateCommand(scene(), title_, pos()));
+    pushStack_(new DeleteStateCommand(scene(), this));
     event->accept();
   }
   else
@@ -202,6 +202,14 @@ FSMElement* State::getElement(const QString& name) const
 QString State::visit(ExportVisitor& visitor) const
 {
   return visitor.exportElement(*this);
+}
+
+QList<Transition*> State::getAllRelatedTransitions() const
+{
+  QList<Transition*> result;
+  result.append(transitions_);
+  result.append(pointingTransitions_);
+  return result;
 }
 
 Transition* State::getTransitionTo(State* destination) const

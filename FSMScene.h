@@ -19,7 +19,7 @@ public:
   Q_SIGNAL void command(QUndoCommand* command);
   Q_SIGNAL void codeChanged(const QString& code);
 
-  void addState(const QString& name, const QPointF& pos);
+  State* addState(const QString& name, const QPointF& pos);
   void removeState(const QString& name);
   State* getState(const QString& name) const;
   FSMElement* getElement(const QString& name) const;

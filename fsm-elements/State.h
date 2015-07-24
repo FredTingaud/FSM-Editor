@@ -49,6 +49,9 @@ public:
   FSMElement* getElement(const QString& name) const;
 
   virtual QString visit(ExportVisitor& visitor) const override;
+
+  QList<Transition*> getAllRelatedTransitions() const;
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
