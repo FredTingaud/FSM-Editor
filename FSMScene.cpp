@@ -1,4 +1,5 @@
 #include<fsm-editor/FSMScene.h>
+#include<fsm-editor/ExportVisitor.h>
 
 #include<fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddStateCommand.h>
@@ -71,4 +72,20 @@ void FSMScene::setCode(FSMElement* element, const QString& code)
 void FSMScene::updateCode(const QString& code)
 {
   pushCommand(new UpdateCode(this, editingElement_->name(), code));
+}
+
+QString FSMScene::generateExport(ExportVisitor& visitor)
+{
+  QString result;
+  QList<Transition*> everyTransitions;
+  for (auto state : states_)
+  {
+    result += visitor.exportElement(*state.second) + "\n";
+    everyTransitions.append(state.second->getTransitions());
+  }
+  for (auto transition : everyTransitions)
+  {
+    result += visitor.exportElement(*transition) + "\n";
+  }
+  return result;
 }

@@ -1,12 +1,17 @@
 #include <fsm-editor/FSMEditor.h>
+#include <fsm-editor/ExportVisitor.h>
 
 #include <QGridLayout>
 #include <QPlainTextEdit>
 #include <QToolBar>
 #include <QAction>
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
 
-FSMEditor::FSMEditor()
+FSMEditor::FSMEditor(ExportVisitor& visitor)
   : fsmView_(&scene_, this)
+  , visitor_(visitor)
 {
   makeLuaEditor();
   addWidget(makeViewPanel());
@@ -76,6 +81,20 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   QAction* redo = undoStack_.createRedoAction(toolbar);
   redo->setShortcut(QKeySequence::Redo);
   toolbar->addAction(redo);
+  toolbar->addSeparator();
+  QAction* exportAction = toolbar->addAction("Export");
+  exportAction->setShortcut(QKeySequence::Save);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
+  connect(exportAction, SIGNAL(triggered()), SLOT(save()));
+}
+
+void FSMEditor::save()
+{
+  QFile file = QFileDialog::getSaveFileName();
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    return;
+
+  QTextStream out(&file);
+  out << scene_.generateExport(visitor_);
 }

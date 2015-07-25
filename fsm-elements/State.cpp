@@ -212,6 +212,13 @@ QList<Transition*> State::getAllRelatedTransitions() const
   return result;
 }
 
+QList<Transition*> State::getTransitions() const
+{
+  QList<Transition*> result;
+  result.append(transitions_);
+  return result;
+}
+
 Transition* State::getTransitionTo(State* destination) const
 {
   for (Transition* t : transitions_)

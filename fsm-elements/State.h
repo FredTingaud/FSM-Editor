@@ -51,6 +51,7 @@ public:
   virtual QString visit(ExportVisitor& visitor) const override;
 
   QList<Transition*> getAllRelatedTransitions() const;
+  QList<Transition*> getTransitions() const;
 
 private:
   static const qreal WIDTH;

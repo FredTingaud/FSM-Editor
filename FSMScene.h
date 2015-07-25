@@ -5,7 +5,7 @@
 class QUndoCommand;
 class State;
 class FSMElement;
-
+class ExportVisitor;
 class FSMScene : public QGraphicsScene
 {
   Q_OBJECT;
@@ -23,10 +23,10 @@ public:
   void removeState(const QString& name);
   State* getState(const QString& name) const;
   FSMElement* getElement(const QString& name) const;
- 
+
   void setCode(FSMElement* element, const QString& code);
   void updateCode(const QString& code);
-
+  QString generateExport(ExportVisitor& visitor);
 public:
   enum UNDO_IDS
   {

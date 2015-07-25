@@ -58,6 +58,9 @@ set(allSRCS
     undo/MoveStateCommand.h
     undo/UpdateCode.cpp
     undo/UpdateCode.h
+
+    tests/DummyVisitor.cpp
+    tests/DummyVisitor.h
     )
 
 set(linkLibraries
