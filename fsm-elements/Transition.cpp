@@ -223,6 +223,16 @@ FSMScene* Transition::fsmScene() const
   return nullptr;
 }
 
+QPainterPath Transition::shape() const
+{
+  QPainterPath path;
+  for (auto shape : calculateShape())
+  {
+    path.addPolygon(shape);
+  }
+  return path;
+}
+
 QString Transition::name() const
 {
   if (destination_ == nullptr)

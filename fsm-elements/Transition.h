@@ -48,6 +48,7 @@ public:
 
   virtual QString visit(ExportVisitor& visitor) const override;
 
+  virtual QPainterPath shape() const override;
 private:
 
   QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle) const;
