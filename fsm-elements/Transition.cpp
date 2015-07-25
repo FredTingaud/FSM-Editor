@@ -77,7 +77,6 @@ void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
   {
     painter->drawPolygon(poly);
   }
-  calculateShape();
 }
 
 QList<QPolygonF> Transition::calculateShape() const
