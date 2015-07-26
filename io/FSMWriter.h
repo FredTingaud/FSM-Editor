@@ -1,9 +1,9 @@
 #pragma once
 
-class FSMScene;
+class Graph;
 
 class FSMWriter
 {
 public:
-  void write(FSMScene& scene);
+  void write(Graph& scene);
 };

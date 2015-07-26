@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsScene>
+#include <fsm-editor/model/Graph.h>
 
 class QUndoCommand;
 class State;
@@ -32,9 +33,10 @@ public:
 
   void setCode(FSMElement* element, const QString& code);
   void updateCode(const QString& code);
-  QString generateExport(ExportVisitor& visitor);
 
   void selectElement(const QString& element);
+
+  Graph graph() const;
 
 public:
   enum UNDO_IDS

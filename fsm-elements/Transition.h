@@ -1,12 +1,13 @@
 #pragma once
 
 #include <fsm-editor/fsm-elements/FSMElement.h>
+#include <fsm-editor/model/GraphTransition.h>
 
 #include<QGraphicsItem>
 
 class State;
 class FSMScene;
-class Transition : public QGraphicsItem, public FSMElement
+class Transition : public QGraphicsItem, public FSMElement, public GraphTransition
 {
   using super = QGraphicsItem;
 public:
@@ -43,6 +44,7 @@ public:
 
   virtual void keyPressEvent(QKeyEvent *event) override;
 
+  virtual QString getCode() const override;
   virtual void setCode(const QString& code) override;
   virtual QString name() const override;
 
@@ -64,6 +66,10 @@ private:
   virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
   FSMScene* fsmScene() const;
+
+  virtual GraphState* getOriginState() const override;
+
+  virtual GraphState* getDestinationState() const override;
 
 private:
   static const qreal LINK_SIZE;

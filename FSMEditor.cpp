@@ -100,5 +100,5 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
 
 void FSMEditor::save()
 {
-  settings_.getWriter().write(scene_);
+  settings_.getWriter().write(scene_.graph());
 }

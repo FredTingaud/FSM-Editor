@@ -182,6 +182,11 @@ void State::setPointedBy(Transition* transition, bool pointed)
   }
 }
 
+QString State::getCode() const
+{
+  return FSMElement::getCode();
+}
+
 void State::setCode(const QString& code)
 {
   FSMElement::setCode(code);

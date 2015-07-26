@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fsm-editor/fsm-elements/FSMElement.h>
+#include <fsm-editor/model/GraphState.h>
 #include <QGraphicsRectItem>
 
 #include <fsm-editor/fsm-elements/Transition.h>
@@ -11,7 +12,7 @@
 
 class FSMScene;
 
-class State : public QGraphicsRectItem, public FSMElement
+class State : public QGraphicsRectItem, public FSMElement, public GraphState
 {
   using super = QGraphicsRectItem;
 public:
@@ -44,6 +45,7 @@ public:
 
   void setPointedBy(Transition* transition, bool pointed);
 
+  virtual QString getCode() const override;
   virtual void setCode(const QString& code) override;
 
   Transition* getElement(const QString& name) const;

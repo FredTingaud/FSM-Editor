@@ -223,6 +223,21 @@ FSMScene* Transition::fsmScene() const
   return nullptr;
 }
 
+GraphState* Transition::getOriginState() const
+{
+  return origin_;
+}
+
+GraphState* Transition::getDestinationState() const
+{
+  return destination_;
+}
+
+QString Transition::getCode() const
+{
+  return FSMElement::getCode();
+}
+
 QPainterPath Transition::shape() const
 {
   QPainterPath path;

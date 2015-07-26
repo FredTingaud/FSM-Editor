@@ -1,13 +1,15 @@
 #include <fsm-editor/io/FSMWriter.h>
 
-#include <fsm-editor/FSMScene.h>
+#include <fsm-editor/model/Graph.h>
+#include <fsm-editor/model/GraphState.h>
+#include <fsm-editor/model/GraphTransition.h>
 #include <fsm-editor/tests/DummyVisitor.h>
 
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
 
-void FSMWriter::write(FSMScene& scene)
+void FSMWriter::write(Graph& scene)
 {
   static DummyVisitor visitor;
 
@@ -16,5 +18,12 @@ void FSMWriter::write(FSMScene& scene)
     return;
 
   QTextStream out(&file);
-  out << scene.generateExport(visitor);
+  for (GraphState* state : scene.getAllStates())
+  {
+    out << state->visit(visitor) << "\n";
+  }
+  for (GraphTransition* transition : scene.getAllTransitions())
+  {
+    out << transition->visit(visitor) << "\n";
+  }
 }

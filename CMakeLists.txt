@@ -52,6 +52,10 @@ set(allSRCS
     io/FSMReader.h
     io/FSMWriter.cpp
     io/FSMWriter.h
+    model/Graph.h
+    model/GraphElement.h
+    model/GraphState.h
+    model/GraphTransition.h
     undo/AddStateCommand.cpp
     undo/AddStateCommand.h
     undo/AddTransition.cpp

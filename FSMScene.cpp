@@ -57,7 +57,9 @@ void FSMScene::removeState(const QString& name)
 
 State* FSMScene::getState(const QString& name) const
 {
-  return states_.at(name);
+  if (states_.count(name))
+    return states_.at(name);
+  return nullptr;
 }
 
 FSMElement* FSMScene::getElement(const QString& name) const
@@ -97,22 +99,6 @@ void FSMScene::updateCode(const QString& code)
   }
 }
 
-QString FSMScene::generateExport(ExportVisitor& visitor)
-{
-  QString result;
-  QList<Transition*> everyTransitions;
-  for (auto state : states_)
-  {
-    result += visitor.exportElement(*state.second) + "\n";
-    everyTransitions.append(state.second->getTransitions());
-  }
-  for (auto transition : everyTransitions)
-  {
-    result += visitor.exportElement(*transition) + "\n";
-  }
-  return result;
-}
-
 void FSMScene::selectElement(const QString& element)
 {
   QGraphicsItem* item = getState(element);
@@ -125,4 +111,21 @@ void FSMScene::selectElement(const QString& element)
     clearSelection();
     item->setSelected(true);
   }
+}
+
+Graph FSMScene::graph() const
+{
+  Graph result;
+  QList<GraphState*> everyStates;
+  QList<GraphTransition*> everyTransitions;
+  for (auto state : states_)
+  {
+    everyStates.append(state.second);
+    for (auto transition : state.second->getTransitions())
+    {
+      everyTransitions.append(transition);
+    }
+  }
+  result.setData(std::move(everyStates), std::move(everyTransitions));
+  return result;
 }
