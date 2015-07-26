@@ -43,7 +43,7 @@ public:
 
   virtual void keyPressEvent(QKeyEvent *event) override;
 
-  void setCode(const QString& code);
+  virtual void setCode(const QString& code) override;
   virtual QString name() const override;
 
   virtual QString visit(ExportVisitor& visitor) const override;

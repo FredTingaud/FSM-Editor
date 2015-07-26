@@ -14,12 +14,16 @@ UpdateCode::UpdateCode(FSMScene* scene, const QString& element, const QString& n
 
 void UpdateCode::undo()
 {
-  scene_->getElement(element_)->setCode(previousCode_);
+  FSMElement* element = scene_->getElement(element_);
+  element->setCode(previousCode_);
+  scene_->selectElement(element_);
 }
 
 void UpdateCode::redo()
 {
-  scene_->getElement(element_)->setCode(nextCode_);
+  FSMElement* element = scene_->getElement(element_);
+  element->setCode(nextCode_);
+  scene_->selectElement(element_);
 }
 
 int UpdateCode::id() const

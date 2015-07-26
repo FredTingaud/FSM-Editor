@@ -24,6 +24,7 @@ private:
   Q_SLOT void stackCommand(QUndoCommand* command);
   Q_SLOT void transferCodeChanged();
   Q_SLOT void displaySetCode(const QString& code);
+  Q_SLOT void hideCode();
   Q_SLOT void save();
 
 private:

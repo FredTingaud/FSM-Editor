@@ -15,6 +15,7 @@ FSMScene::FSMScene()
   : editingElement_(nullptr)
 {
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
+  connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
 }
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -27,11 +28,22 @@ void FSMScene::pushCommand(QUndoCommand* undoCommand)
   command(undoCommand);
 }
 
+void FSMScene::checkSelection()
+{
+  if (selectedItems().isEmpty())
+  {
+    editingElement_ = nullptr;
+    Q_EMIT codeHidden();
+  }
+}
+
 State* FSMScene::addState(const QString& name, const QPointF& pos)
 {
   State* item = new State(name, pos, [&](QUndoCommand* command){this->pushCommand(command); });
   states_.insert(std::pair<QString, State*>(name, item));
   addItem(item);
+  clearSelection();
+  item->setSelected(true);
   return item;
 }
 
@@ -50,8 +62,16 @@ State* FSMScene::getState(const QString& name) const
 
 FSMElement* FSMScene::getElement(const QString& name) const
 {
-  if (states_.count(name))
-    return states_.at(name);
+  State* state = getState(name);
+  if (state == nullptr)
+  {
+    return getTransition(name);
+  }
+  return state;
+}
+
+Transition* FSMScene::getTransition(const QString& name) const
+{
   for (auto&& it : states_)
   {
     auto element = it.second->getElement(name);
@@ -71,7 +91,10 @@ void FSMScene::setCode(FSMElement* element, const QString& code)
 
 void FSMScene::updateCode(const QString& code)
 {
-  pushCommand(new UpdateCode(this, editingElement_->name(), code));
+  if (editingElement_ != nullptr)
+  {
+    pushCommand(new UpdateCode(this, editingElement_->name(), code));
+  }
 }
 
 QString FSMScene::generateExport(ExportVisitor& visitor)
@@ -88,4 +111,18 @@ QString FSMScene::generateExport(ExportVisitor& visitor)
     result += visitor.exportElement(*transition) + "\n";
   }
   return result;
+}
+
+void FSMScene::selectElement(const QString& element)
+{
+  QGraphicsItem* item = getState(element);
+  if (item == nullptr)
+  {
+    item = getTransition(element);
+  }
+  if (selectedItems().count() != 1 || selectedItems()[0] != item)
+  {
+    clearSelection();
+    item->setSelected(true);
+  }
 }

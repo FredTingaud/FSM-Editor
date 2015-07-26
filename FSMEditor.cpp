@@ -40,11 +40,19 @@ void FSMEditor::makeLuaEditor()
   editor_ = new QPlainTextEdit(this);
   editor_->setPlainText("function sample code");
   connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
+  connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
+}
+
+void FSMEditor::hideCode()
+{
+  editor_->clear();
+  editor_->setEnabled(false);
 }
 
 void FSMEditor::displaySetCode(const QString& code)
 {
+  editor_->setEnabled(true);
   if (editor_->toPlainText() != code)
   {
     editor_->blockSignals(true);
