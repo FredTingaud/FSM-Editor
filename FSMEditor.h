@@ -10,12 +10,12 @@
 class QToolBar;
 class QUndoCommand;
 class QPlainTextEdit;
-class ExportVisitor;
+class Settings;
 class FSMEditor : public QSplitter
 {
   Q_OBJECT;
 public:
-  FSMEditor(ExportVisitor& visitor);
+  FSMEditor(Settings& settings);
 
   Q_SLOT void zoomIn();
   Q_SLOT void zoomOut();
@@ -40,5 +40,5 @@ private:
 
   QUndoStack undoStack_;
   QPlainTextEdit* editor_;
-  ExportVisitor& visitor_;
+  Settings& settings_;
 };

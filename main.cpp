@@ -1,13 +1,13 @@
 #include <QApplication>
 
-#include <fsm-editor/tests/DummyVisitor.h>
+#include <fsm-editor/Settings.h>
 #include <fsm-editor/FSMEditor.h>
 
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
-  DummyVisitor visitor;
-  FSMEditor editor(visitor);
+  Settings settings;
+  FSMEditor editor(settings);
   editor.show();
 
   return app.exec();

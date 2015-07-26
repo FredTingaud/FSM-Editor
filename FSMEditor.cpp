@@ -1,5 +1,6 @@
 #include <fsm-editor/FSMEditor.h>
-#include <fsm-editor/ExportVisitor.h>
+#include <fsm-editor/Settings.h>
+#include <fsm-editor/io/FSMWriter.h>
 
 #include <QGridLayout>
 #include <QPlainTextEdit>
@@ -9,9 +10,9 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-FSMEditor::FSMEditor(ExportVisitor& visitor)
+FSMEditor::FSMEditor(Settings& settings)
   : fsmView_(&scene_, this)
-  , visitor_(visitor)
+  , settings_(settings)
 {
   makeLuaEditor();
   addWidget(makeViewPanel());
@@ -99,10 +100,5 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
 
 void FSMEditor::save()
 {
-  QFile file = QFileDialog::getSaveFileName();
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    return;
-
-  QTextStream out(&file);
-  out << scene_.generateExport(visitor_);
+  settings_.getWriter().write(scene_);
 }

@@ -40,12 +40,18 @@ set(allSRCS
     FSMEditor.h
     FSMScene.cpp
     FSMScene.h
+    Settings.cpp
+    Settings.h
     fsm-elements/FSMElement.cpp
     fsm-elements/FSMElement.h
     fsm-elements/State.cpp
     fsm-elements/State.h
     fsm-elements/Transition.cpp
     fsm-elements/Transition.h
+    io/FSMReader.cpp
+    io/FSMReader.h
+    io/FSMWriter.cpp
+    io/FSMWriter.h
     undo/AddStateCommand.cpp
     undo/AddStateCommand.h
     undo/AddTransition.cpp
@@ -69,6 +75,7 @@ set(linkLibraries
     )
 
 source_group("elements" REGULAR_EXPRESSION fsm-elements/*)
+source_group("io" REGULAR_EXPRESSION fsm-elements/*)
 
 add_library(FSM-lib ${allSRCS})
 target_link_libraries(FSM-lib ${linkLibraries})
