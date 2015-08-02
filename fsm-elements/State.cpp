@@ -160,6 +160,8 @@ void State::transitionTo(State* destination, const QString& code /*= ""*/)
   scene()->addItem(transition);
   destination->setPointedBy(transition, true);
   transition->setCode(code);
+  scene()->clearSelection();
+  transition->setSelected(true);
 }
 
 void State::removeTransitionTo(State* destination)
