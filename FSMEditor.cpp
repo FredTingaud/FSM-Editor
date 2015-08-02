@@ -10,16 +10,26 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QSettings>
+
+const QString FSMEditor::LAST_DIR_KEY = "last_dir";
 
 FSMEditor::FSMEditor(Settings& settings)
   : fsmView_(&scene_, this)
   , settings_(settings)
 {
+  loadSettings();
+
   makeLuaEditor();
   addWidget(makeViewPanel());
   addWidget(editor_);
 
   connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
+}
+
+FSMEditor::~FSMEditor()
+{
+  saveSettings();
 }
 
 void FSMEditor::zoomIn()
@@ -44,6 +54,18 @@ void FSMEditor::makeLuaEditor()
   connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
+}
+
+void FSMEditor::saveSettings()
+{
+  QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
+  settings.setValue(LAST_DIR_KEY, lastDir_);
+}
+
+void FSMEditor::loadSettings()
+{
+  QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
+  lastDir_ = settings.value(LAST_DIR_KEY, "").toString();
 }
 
 void FSMEditor::hideCode()
@@ -104,7 +126,15 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
 
 void FSMEditor::save()
 {
-  QFile file = QFileDialog::getSaveFileName();
+  QString fileName = QFileDialog::getSaveFileName(0, tr("Save Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
+  if (fileName.isNull())
+    return;
+  if (!fileName.endsWith(settings_.getExportExtension()))
+  {
+    fileName += "." + settings_.getExportExtension();
+  }
+  QFile file(fileName);
+  saveLastDir(fileName);
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     return;
 
@@ -113,9 +143,18 @@ void FSMEditor::save()
   settings_.getWriter().write(scene_.graph(), out);
 }
 
+void FSMEditor::saveLastDir(QString fileName)
+{
+  lastDir_ = QFileInfo(fileName).absolutePath();
+}
+
 void FSMEditor::load()
 {
-  QFile file = QFileDialog::getOpenFileName();
+  QString fileName = QFileDialog::getOpenFileName(0, tr("Open Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
+  if (fileName.isNull())
+    return;
+  QFile file(fileName);
+  saveLastDir(fileName);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     return;
 

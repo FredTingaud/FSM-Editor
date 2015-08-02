@@ -16,6 +16,7 @@ class FSMEditor : public QSplitter
   Q_OBJECT;
 public:
   FSMEditor(Settings& settings);
+  virtual ~FSMEditor();
 
   Q_SLOT void zoomIn();
   Q_SLOT void zoomOut();
@@ -28,12 +29,19 @@ private:
   Q_SLOT void save();
   Q_SLOT void load();
 
+  void saveLastDir(QString fileName);
+
 private:
   QWidget* makeViewPanel();
 
   void createSceneActions(QToolBar* toolbar);
 
   void makeLuaEditor();
+  void loadSettings();
+  void saveSettings();
+
+private:
+  static const QString LAST_DIR_KEY;
 
 private:
   FSMScene scene_;
@@ -42,4 +50,5 @@ private:
   QUndoStack undoStack_;
   QPlainTextEdit* editor_;
   Settings& settings_;
+  QString lastDir_;
 };
