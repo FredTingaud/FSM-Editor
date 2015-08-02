@@ -129,3 +129,19 @@ Graph FSMScene::graph() const
   result.setData(std::move(everyStates), std::move(everyTransitions));
   return result;
 }
+
+void FSMScene::setNewGraph(Graph&& graph)
+{
+  clear();
+  for (auto state : graph.getAllStates())
+  {
+    auto res = addState(state->name(), state->getPosition());
+    res->setCode(state->getCode());
+  }
+  for (auto transition : graph.getAllTransitions())
+  {
+    auto res = getState(transition->getOriginState());
+    auto dest = getState(transition->getDestinationState());
+    res->transitionTo(dest, transition->getCode());
+  }
+}

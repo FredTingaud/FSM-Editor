@@ -69,6 +69,8 @@ set(allSRCS
     undo/UpdateCode.cpp
     undo/UpdateCode.h
 
+    tests/DummyState.h
+    tests/DummyTransition.h
     tests/DummyVisitor.cpp
     tests/DummyVisitor.h
     )

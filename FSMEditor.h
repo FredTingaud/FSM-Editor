@@ -26,6 +26,7 @@ private:
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
   Q_SLOT void save();
+  Q_SLOT void load();
 
 private:
   QWidget* makeViewPanel();

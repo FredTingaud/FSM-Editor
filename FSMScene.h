@@ -37,7 +37,7 @@ public:
   void selectElement(const QString& element);
 
   Graph graph() const;
-
+  void setNewGraph(Graph&& graph);
 public:
   enum UNDO_IDS
   {

@@ -1,6 +1,7 @@
 #include <fsm-editor/FSMEditor.h>
 #include <fsm-editor/Settings.h>
 #include <fsm-editor/io/FSMWriter.h>
+#include <fsm-editor/io/FSMReader.h>
 
 #include <QGridLayout>
 #include <QPlainTextEdit>
@@ -93,9 +94,12 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   toolbar->addSeparator();
   QAction* exportAction = toolbar->addAction("Export");
   exportAction->setShortcut(QKeySequence::Save);
+  QAction* importAction = toolbar->addAction("Import");
+  importAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
   connect(exportAction, SIGNAL(triggered()), SLOT(save()));
+  connect(importAction, SIGNAL(triggered()), SLOT(load()));
 }
 
 void FSMEditor::save()
@@ -107,4 +111,16 @@ void FSMEditor::save()
   QTextStream out(&file);
 
   settings_.getWriter().write(scene_.graph(), out);
+}
+
+void FSMEditor::load()
+{
+  QFile file = QFileDialog::getOpenFileName();
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    return;
+
+  QTextStream in(&file);
+
+  scene_.setNewGraph(settings_.getReader().read(in));
+  undoStack_.clear();
 }
