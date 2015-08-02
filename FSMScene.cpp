@@ -20,7 +20,7 @@ FSMScene::FSMScene()
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-  command(new AddStateCommand(this, QString("State %1").arg(index++), event->scenePos()));
+  command(new AddStateCommand(this, QString("State%1").arg(index++), event->scenePos()));
 }
 
 void FSMScene::pushCommand(QUndoCommand* undoCommand)
