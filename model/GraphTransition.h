@@ -10,6 +10,6 @@ class GraphTransition : public virtual GraphElement
 public:
   virtual QString visit(ExportVisitor& visitor) const = 0;
 
-  virtual GraphState* getOriginState() const = 0;
-  virtual GraphState* getDestinationState() const = 0;
+  virtual QString getOriginState() const = 0;
+  virtual QString getDestinationState() const = 0;
 };

@@ -54,7 +54,7 @@ public:
 
   QList<Transition*> getAllRelatedTransitions() const;
   QList<Transition*> getTransitions() const;
-
+  virtual QPointF getPosition() const override;
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;

@@ -9,15 +9,10 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-void FSMWriter::write(Graph& scene)
+void FSMWriter::write(Graph& scene, QTextStream& out)
 {
   static DummyVisitor visitor;
 
-  QFile file = QFileDialog::getSaveFileName();
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    return;
-
-  QTextStream out(&file);
   for (GraphState* state : scene.getAllStates())
   {
     out << state->visit(visitor) << "\n";

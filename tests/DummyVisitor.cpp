@@ -3,12 +3,12 @@
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/fsm-elements/Transition.h>
 
-QString DummyVisitor::exportElement(const State& state)
+QString DummyVisitor::exportElement(const GraphState& state)
 {
-  return "new State {\n" + state.getCode() + "\n}";
+  return QString("!! State %1 {\n%2\n} - %3:%4").arg(state.name()).arg(state.getCode()).arg(state.getPosition().x()).arg(state.getPosition().y());
 }
 
-QString DummyVisitor::exportElement(const Transition& transition)
+QString DummyVisitor::exportElement(const GraphTransition& transition)
 {
-  return "new Transition from " + transition.origin()->name() + " to " + transition.destination()->name() + "{\n" + transition.getCode() + "\n}";
+  return QString("!! Transition from %1 to %2 {\n%3\n}").arg(transition.getOriginState()).arg(transition.getDestinationState()).arg(transition.getCode());
 }

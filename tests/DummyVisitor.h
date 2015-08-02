@@ -5,6 +5,6 @@
 class DummyVisitor : public ExportVisitor
 {
 public:
-  virtual QString exportElement(const State& state) override;
-  virtual QString exportElement(const Transition& transition) override;
+  virtual QString exportElement(const GraphState& state) override;
+  virtual QString exportElement(const GraphTransition& transition) override;
 };

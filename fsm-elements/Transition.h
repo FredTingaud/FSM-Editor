@@ -67,9 +67,9 @@ private:
 
   FSMScene* fsmScene() const;
 
-  virtual GraphState* getOriginState() const override;
+  virtual QString getOriginState() const override;
 
-  virtual GraphState* getDestinationState() const override;
+  virtual QString getDestinationState() const override;
 
 private:
   static const qreal LINK_SIZE;

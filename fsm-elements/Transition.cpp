@@ -223,14 +223,14 @@ FSMScene* Transition::fsmScene() const
   return nullptr;
 }
 
-GraphState* Transition::getOriginState() const
+QString Transition::getOriginState() const
 {
-  return origin_;
+  return origin_->name();
 }
 
-GraphState* Transition::getDestinationState() const
+QString Transition::getDestinationState() const
 {
-  return destination_;
+  return destination_->name();
 }
 
 QString Transition::getCode() const

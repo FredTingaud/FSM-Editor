@@ -223,6 +223,11 @@ QList<Transition*> State::getTransitions() const
   return result;
 }
 
+QPointF State::getPosition() const
+{
+  return pos();
+}
+
 Transition* State::getTransitionTo(State* destination) const
 {
   for (Transition* t : transitions_)

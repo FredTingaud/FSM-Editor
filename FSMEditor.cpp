@@ -100,5 +100,11 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
 
 void FSMEditor::save()
 {
-  settings_.getWriter().write(scene_.graph());
+  QFile file = QFileDialog::getSaveFileName();
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    return;
+
+  QTextStream out(&file);
+
+  settings_.getWriter().write(scene_.graph(), out);
 }

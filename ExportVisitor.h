@@ -2,13 +2,13 @@
 
 #include <QString>
 
-class State;
-class Transition;
+class GraphState;
+class GraphTransition;
 
 class ExportVisitor
 {
 public:
-  virtual QString exportElement(const State& state) = 0;
+  virtual QString exportElement(const GraphState& state) = 0;
 
-  virtual QString exportElement(const Transition& transition) = 0;
+  virtual QString exportElement(const GraphTransition& transition) = 0;
 };
