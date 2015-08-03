@@ -15,8 +15,9 @@
 const QString FSMEditor::LAST_DIR_KEY = "last_dir";
 
 FSMEditor::FSMEditor(Settings& settings)
-  : fsmView_(&scene_, this)
-  , settings_(settings)
+  : settings_(settings)
+  , scene_([&](const QString& name){return settings_.validateStateName(name); })
+  , fsmView_(&scene_, this)
 {
   loadSettings();
 

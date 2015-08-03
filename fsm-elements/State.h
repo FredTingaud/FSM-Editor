@@ -33,6 +33,7 @@ public:
   virtual QString name() const override;
 
   virtual void keyPressEvent(QKeyEvent *event) override;
+  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
@@ -55,6 +56,9 @@ public:
   QList<Transition*> getAllRelatedTransitions() const;
   QList<Transition*> getTransitions() const;
   virtual QPointF getPosition() const override;
+  void setName(const QString& name);
+  void askRename();
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;

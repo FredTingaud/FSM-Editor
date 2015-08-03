@@ -3,6 +3,7 @@
 
 #include<fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddStateCommand.h>
+#include <fsm-editor/undo/RenameState.h>
 #include <fsm-editor/undo/UpdateCode.h>
 
 #include<QGraphicsSceneMouseEvent>
@@ -11,8 +12,9 @@
 int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
 
-FSMScene::FSMScene()
+FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
   : editingElement_(nullptr)
+  , stateValidator_(stateValidator)
 {
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
   connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
@@ -144,4 +146,24 @@ void FSMScene::setNewGraph(Graph&& graph)
     auto dest = getState(transition->getDestinationState());
     res->transitionTo(dest, transition->getCode());
   }
+}
+
+void FSMScene::setStateName(State* state, const QString& name)
+{
+  states_.erase(state->name());
+  state->setName(name);
+  states_.insert(std::pair<QString, State*>(name, state));
+}
+
+QString FSMScene::renameState(State* state, const QString& newName)
+{
+  if (states_.count(newName))
+  {
+    return tr("There already is a state called %1 in the chart.").arg(newName);
+  }
+  QString settingsError = stateValidator_(newName);
+  if (!settingsError.isEmpty())
+    return settingsError;
+  pushCommand(new RenameState(this, state->name(), newName));
+  return "";
 }

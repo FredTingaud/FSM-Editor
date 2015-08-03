@@ -14,4 +14,5 @@ public:
   virtual QString getExportExtension() const;
   virtual QString getOrganizationName() const;
   virtual QString getApplicationName() const;
+  virtual QString validateStateName(const QString& name);
 };

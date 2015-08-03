@@ -4,6 +4,7 @@
 #include <fsm-editor/io/FSMReader.h>
 
 #include <QCoreApplication>
+#include <QRegExp>
 
 FSMReader& Settings::getReader()
 {
@@ -43,4 +44,11 @@ QString Settings::getApplicationName() const
     res = "FSM Editor";
   }
   return res;
+}
+
+QString Settings::validateStateName(const QString& name)
+{
+  if (name.contains(QRegExp("\\s")))
+    return QObject::tr("State name shouldn't contain white spaces.");
+  return "";
 }

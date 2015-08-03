@@ -44,11 +44,11 @@ private:
   static const QString LAST_DIR_KEY;
 
 private:
+  Settings& settings_;
   FSMScene scene_;
   QGraphicsView fsmView_;
 
   QUndoStack undoStack_;
   QPlainTextEdit* editor_;
-  Settings& settings_;
   QString lastDir_;
 };

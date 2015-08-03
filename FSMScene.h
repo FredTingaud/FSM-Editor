@@ -3,6 +3,8 @@
 #include <QGraphicsScene>
 #include <fsm-editor/model/Graph.h>
 
+#include <functional>
+
 class QUndoCommand;
 class State;
 class Transition;
@@ -12,7 +14,7 @@ class FSMScene : public QGraphicsScene
 {
   Q_OBJECT;
 public:
-  FSMScene();
+  FSMScene(std::function<QString(const QString&)> stateValidator);
 
   virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
@@ -31,6 +33,9 @@ public:
 
   Transition* getTransition(const QString& name) const;
 
+  QString renameState(State* state, const QString& newName);
+  void setStateName(State* state, const QString& name);
+
   void setCode(FSMElement* element, const QString& code);
   void updateCode(const QString& code);
 
@@ -38,6 +43,7 @@ public:
 
   Graph graph() const;
   void setNewGraph(Graph&& graph);
+
 public:
   enum UNDO_IDS
   {
@@ -52,4 +58,5 @@ private:
 private:
   std::map<QString, State*> states_;
   FSMElement* editingElement_;
+  std::function<QString(const QString&)> stateValidator_;
 };
