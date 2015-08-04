@@ -22,7 +22,12 @@ FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-  command(new AddStateCommand(this, QString("State%1").arg(index++), event->scenePos()));
+  QString name = QString("State%1").arg(index++);
+  while (states_.count(name) > 0)
+  {
+    name = QString("State%1").arg(index++);
+  }
+  command(new AddStateCommand(this, name, event->scenePos()));
 }
 
 void FSMScene::pushCommand(QUndoCommand* undoCommand)
