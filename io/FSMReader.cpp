@@ -47,7 +47,7 @@ GraphState* FSMReader::readState(const QString& name, QTextStream& inStream)
     }
     if (openedBrackets > 0)
     {
-      code += line;
+      code += line + "\n";
     }
     else
     {
