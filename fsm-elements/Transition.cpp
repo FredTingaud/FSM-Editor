@@ -319,5 +319,6 @@ void Transition::keyPressEvent(QKeyEvent *event)
 void Transition::setCode(const QString& code)
 {
   FSMElement::setCode(code);
+  setToolTip(code);
   fsmScene()->setCode(this, getCode());
 }

@@ -203,6 +203,7 @@ QString State::getCode() const
 void State::setCode(const QString& code)
 {
   FSMElement::setCode(code);
+  setToolTip(code);
   scene()->setCode(this, getCode());
 }
 
