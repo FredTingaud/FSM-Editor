@@ -1,4 +1,4 @@
-#include <fsm-editor/tests/DummyVisitor.h>
+#include <fsm-editor/settings/dummy/DummyVisitor.h>
 
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/fsm-elements/Transition.h>

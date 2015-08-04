@@ -70,11 +70,6 @@ set(allSRCS
     undo/RenameState.h
     undo/UpdateCode.cpp
     undo/UpdateCode.h
-
-    tests/DummyState.h
-    tests/DummyTransition.h
-    tests/DummyVisitor.cpp
-    tests/DummyVisitor.h
     )
 
 set(linkLibraries
@@ -90,6 +85,11 @@ target_link_libraries(FSM-lib ${linkLibraries})
 
 set(mainSRCS
     main.cpp
+    
+    settings/dummy/DummyState.h
+    settings/dummy/DummyTransition.h
+    settings/dummy/DummyVisitor.cpp
+    settings/dummy/DummyVisitor.h
     )
 
 set(mainLibraries

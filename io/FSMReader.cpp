@@ -1,7 +1,7 @@
 #include <fsm-editor/io/FSMReader.h>
 
-#include <fsm-editor/tests/DummyTransition.h>
-#include <fsm-editor/tests/DummyState.h>
+#include <fsm-editor/settings/dummy/DummyTransition.h>
+#include <fsm-editor/settings/dummy/DummyState.h>
 
 #include <QTextStream>
 

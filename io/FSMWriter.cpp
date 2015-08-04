@@ -3,7 +3,7 @@
 #include <fsm-editor/model/Graph.h>
 #include <fsm-editor/model/GraphState.h>
 #include <fsm-editor/model/GraphTransition.h>
-#include <fsm-editor/tests/DummyVisitor.h>
+#include <fsm-editor/settings/dummy/DummyVisitor.h>
 
 #include <QFile>
 #include <QFileDialog>
