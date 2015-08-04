@@ -34,7 +34,8 @@ Transition::Transition(State* origin)
 
 void Transition::initialize()
 {
-  setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
+  auto flags = QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges;
+  setFlags(flags);
   initPos();
   updateVisibility();
 }
@@ -279,16 +280,19 @@ void Transition::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Transition::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   super::mouseMoveEvent(event);
-  prepareGeometryChange();
-  movingPos_ = event->scenePos();
+  if (destination_ == nullptr)
+  {
+    prepareGeometryChange();
+    movingPos_ = event->scenePos();
+  }
 }
 
 void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  movingPos_ = QPointF();
   if (destination_ == nullptr)
   {
-    QList<QGraphicsItem*> items = scene()->collidingItems(this);
+    movingPos_ = QPointF();
+    QList<QGraphicsItem*> items = scene()->items(event->scenePos());
     for (QGraphicsItem* item : items)
     {
       State* child = dynamic_cast<State*>(item);
