@@ -14,9 +14,7 @@ MoveStateCommand::MoveStateCommand(FSMScene* scene, const QString& name, const Q
 void MoveStateCommand::undo()
 {
   State* state = scene_->getState(name_);
-  state->setSilentMove(true);
-  state->setPos(previousPos_);
-  state->setSilentMove(false);
+  state->silentlySetPosition(previousPos_);
 }
 
 void MoveStateCommand::redo()
@@ -28,9 +26,7 @@ void MoveStateCommand::redo()
   else
   {
     State* state = scene_->getState(name_);
-    state->setSilentMove(true);
-    state->setPos(newPos_);
-    state->setSilentMove(false);
+    state->silentlySetPosition(newPos_);
   }
 }
 

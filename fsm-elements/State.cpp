@@ -72,15 +72,7 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
   QVariant result = super::itemChange(change, value);
   if (!silent_ && change == QGraphicsItem::ItemPositionChange)
   {
-    for (Transition* child : transitions_)
-    {
-      child->initPos();
-    }
-    for (Transition* child : pointingTransitions_)
-    {
-      child->initPos();
-    }
-    dangling_.initPos();
+    reactToPositionChange();
     pushStack_(new MoveStateCommand(scene(), title_, value.toPointF(), this));
   }
   else if (change == QGraphicsItem::ItemSceneHasChanged)
@@ -99,6 +91,13 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
     }
   }
   return result;
+}
+
+void State::reactToPositionChange()
+{
+  updateTransitionsPositions(transitions_);
+  updateTransitionsPositions(pointingTransitions_);
+  dangling_.initPos();
 }
 
 void State::setSilentMove(bool silent)
@@ -237,6 +236,14 @@ QList<Transition*> State::getTransitions() const
   return result;
 }
 
+void State::silentlySetPosition(const QPointF& position)
+{
+  setSilentMove(true);
+  setPos(position);
+  reactToPositionChange();
+  setSilentMove(false);
+}
+
 QPointF State::getPosition() const
 {
   return pos();
@@ -273,4 +280,12 @@ Transition* State::getTransitionTo(State* destination) const
     }
   }
   return nullptr;
+}
+
+void State::updateTransitionsPositions(QList<Transition*>& transitions)
+{
+  for (Transition* child : transitions)
+  {
+    child->initPos();
+  }
 }

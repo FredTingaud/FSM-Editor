@@ -28,6 +28,10 @@ public:
 
   virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
+  void reactToPositionChange();
+
+  void updateTransitionsPositions(QList<Transition*>& transitions);
+
   void setSilentMove(bool silent);
 
   virtual QString name() const override;
@@ -55,6 +59,8 @@ public:
 
   QList<Transition*> getAllRelatedTransitions() const;
   QList<Transition*> getTransitions() const;
+
+  void silentlySetPosition(const QPointF& position);
   virtual QPointF getPosition() const override;
   void setName(const QString& name);
   void askRename();
