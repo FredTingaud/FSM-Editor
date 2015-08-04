@@ -12,10 +12,10 @@ if(WIN32)
   set(QT_USE_QTMAIN TRUE)
 endif(WIN32)
 
-get_target_property(QtCore_location Qt5::Core LOCATION)
-get_filename_component(QT_BIN ${QtCore_location} DIRECTORY)
-
 if(WIN32)
+  get_target_property(QtCore_location Qt5::Core LOCATION)
+  get_filename_component(QT_BIN ${QtCore_location} DIRECTORY)
+
   add_custom_target(deployQT set "PATH=%PATH%;${QT_BIN}"
                     COMMAND
                     ${QT_BIN}/windeployqt ${CMAKE_BINARY_DIR}/debug/EditorFSM.exe
@@ -48,9 +48,7 @@ set(allSRCS
     fsm-elements/State.h
     fsm-elements/Transition.cpp
     fsm-elements/Transition.h
-    io/FSMReader.cpp
     io/FSMReader.h
-    io/FSMWriter.cpp
     io/FSMWriter.h
     model/Graph.h
     model/GraphElement.h
@@ -83,13 +81,10 @@ source_group("io" REGULAR_EXPRESSION fsm-elements/*)
 add_library(FSM-lib ${allSRCS})
 target_link_libraries(FSM-lib ${linkLibraries})
 
+add_subdirectory(settings)
+
 set(mainSRCS
     main.cpp
-    
-    settings/dummy/DummyState.h
-    settings/dummy/DummyTransition.h
-    settings/dummy/DummyVisitor.cpp
-    settings/dummy/DummyVisitor.h
     )
 
 set(mainLibraries
@@ -97,4 +92,4 @@ set(mainLibraries
     )
 
 add_executable(EditorFSM ${mainSRCS})
-target_link_libraries(EditorFSM ${mainLibraries})
+target_link_libraries(EditorFSM ${mainLibraries} dummy-settings)

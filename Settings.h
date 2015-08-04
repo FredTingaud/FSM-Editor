@@ -11,12 +11,12 @@ public:
   /**
    * @return The writer used to save the FSM chart.
    */
-  virtual FSMWriter& getWriter();
+  virtual FSMWriter& getWriter() = 0;
 
   /**
    * @return The reader used to load files written by the FSMWriter.
    */
-  virtual FSMReader& getReader();
+  virtual FSMReader& getReader() = 0;
 
   /**
    * We use a QTextEdit to edit code. It can display code with syntax highlighting.
@@ -41,7 +41,7 @@ public:
   /**
    * Validates whether the new state name is correctly formed for export.
    * @return the error message if any. Empty string for no error.
-   * @Default forbids whitespaces.
+   * @Default accepts everything.
    */
   virtual QString validateStateName(const QString& name);
 };

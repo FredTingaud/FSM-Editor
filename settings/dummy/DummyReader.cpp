@@ -1,11 +1,11 @@
-#include <fsm-editor/io/FSMReader.h>
+#include <fsm-editor/settings/dummy/DummyReader.h>
 
 #include <fsm-editor/settings/dummy/DummyTransition.h>
 #include <fsm-editor/settings/dummy/DummyState.h>
 
 #include <QTextStream>
 
-Graph FSMReader::read(QTextStream& inStream)
+Graph DummyReader::read(QTextStream& inStream)
 {
   Graph result;
   QRegExp stateRegexp("!! State ([A-Za-z0-9_\\-]+) \\{");
@@ -28,7 +28,7 @@ Graph FSMReader::read(QTextStream& inStream)
   return result;
 }
 
-GraphState* FSMReader::readState(const QString& name, QTextStream& inStream)
+GraphState* DummyReader::readState(const QString& name, QTextStream& inStream)
 {
   DummyState* state = new DummyState(name);
   int openedBrackets = 1;
@@ -65,7 +65,7 @@ GraphState* FSMReader::readState(const QString& name, QTextStream& inStream)
   return state;
 }
 
-GraphTransition* FSMReader::readTransition(const QString& origin, const QString& destination, QTextStream& inStream)
+GraphTransition* DummyReader::readTransition(const QString& origin, const QString& destination, QTextStream& inStream)
 {
   DummyTransition* transition = new DummyTransition(origin, destination);
   int openedBrackets = 1;

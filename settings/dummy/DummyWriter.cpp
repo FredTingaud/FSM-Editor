@@ -1,4 +1,4 @@
-#include <fsm-editor/io/FSMWriter.h>
+#include <fsm-editor/settings/dummy/DummyWriter.h>
 
 #include <fsm-editor/model/Graph.h>
 #include <fsm-editor/model/GraphState.h>
@@ -9,7 +9,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-void FSMWriter::write(Graph& scene, QTextStream& out)
+void DummyWriter::write(Graph& scene, QTextStream& out)
 {
   static DummyVisitor visitor;
 
