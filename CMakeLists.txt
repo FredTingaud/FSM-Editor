@@ -10,16 +10,6 @@ ADD_DEFINITIONS(-DQT_DLL)
 if(WIN32)
   set(QT_USE_QTMAIN TRUE)
   set(QT_USE_QTMAIN TRUE)
-endif(WIN32)
-
-if(WIN32)
-  get_target_property(QtCore_location Qt5::Core LOCATION)
-  get_filename_component(QT_BIN ${QtCore_location} DIRECTORY)
-
-  add_custom_target(deployQT set "PATH=%PATH%;${QT_BIN}"
-                    COMMAND
-                    ${QT_BIN}/windeployqt ${CMAKE_BINARY_DIR}/debug/EditorFSM.exe
-                    )
 
   add_definitions(-DWINVER=0x0501)
   add_definitions(-D_WIN32_WINNT=0x0501)
