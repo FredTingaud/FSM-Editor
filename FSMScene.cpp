@@ -52,9 +52,15 @@ State* FSMScene::addState(const QString& name, const QPointF& pos)
   State* item = new State(name, pos, [&](QUndoCommand* command){this->pushCommand(command); });
   states_.insert(std::pair<QString, State*>(name, item));
   addItem(item);
+  setSelectedItem(item);
+  return item;
+}
+
+void FSMScene::setSelectedItem(QGraphicsItem* item)
+{
   clearSelection();
   item->setSelected(true);
-  return item;
+  setFocusItem(item);
 }
 
 void FSMScene::removeState(const QString& name)
@@ -118,8 +124,7 @@ void FSMScene::selectElement(const QString& element)
   }
   if (selectedItems().count() != 1 || selectedItems()[0] != item)
   {
-    clearSelection();
-    item->setSelected(true);
+    setSelectedItem(item);
   }
 }
 

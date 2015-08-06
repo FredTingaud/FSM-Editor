@@ -27,6 +27,9 @@ public:
   Q_SLOT void checkSelection();
 
   State* addState(const QString& name, const QPointF& pos);
+
+  void setSelectedItem(QGraphicsItem* item);
+
   void removeState(const QString& name);
   State* getState(const QString& name) const;
   FSMElement* getElement(const QString& name) const;
