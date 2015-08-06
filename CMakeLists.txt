@@ -43,7 +43,9 @@ set(allSRCS
     model/Graph.h
     model/GraphElement.h
     model/GraphState.h
+    model/GraphStateImpl.h
     model/GraphTransition.h
+    model/GraphTransitionImpl.h
     undo/AddStateCommand.cpp
     undo/AddStateCommand.h
     undo/AddTransition.cpp

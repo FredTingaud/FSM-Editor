@@ -1,7 +1,7 @@
 #include <fsm-editor/settings/dummy/DummyReader.h>
 
-#include <fsm-editor/settings/dummy/DummyTransition.h>
-#include <fsm-editor/settings/dummy/DummyState.h>
+#include <fsm-editor/model/GraphStateImpl.h>
+#include <fsm-editor/model/GraphTransitionImpl.h>
 
 #include <QTextStream>
 
@@ -30,7 +30,7 @@ Graph DummyReader::read(QTextStream& inStream)
 
 GraphState* DummyReader::readState(const QString& name, QTextStream& inStream)
 {
-  DummyState* state = new DummyState(name);
+  GraphStateImpl* state = new GraphStateImpl(name);
   int openedBrackets = 1;
   QString code;
   QRegExp pos("\\} \\- ([0-9.\\-]+)\\:([0-9.\\-]+)");
@@ -67,7 +67,7 @@ GraphState* DummyReader::readState(const QString& name, QTextStream& inStream)
 
 GraphTransition* DummyReader::readTransition(const QString& origin, const QString& destination, QTextStream& inStream)
 {
-  DummyTransition* transition = new DummyTransition(origin, destination);
+  GraphTransitionImpl* transition = new GraphTransitionImpl(origin, destination);
   int openedBrackets = 1;
   QString code;
   while (openedBrackets > 0 && !inStream.atEnd())

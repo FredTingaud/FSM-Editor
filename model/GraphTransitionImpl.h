@@ -2,10 +2,10 @@
 
 #include <fsm-editor/model/GraphTransition.h>
 
-class DummyTransition : public GraphTransition
+class GraphTransitionImpl : public GraphTransition
 {
 public:
-  DummyTransition(const QString& origin, const QString& destination)
+  GraphTransitionImpl(const QString& origin, const QString& destination)
     : origin_(origin)
     , destination_(destination)
   {}

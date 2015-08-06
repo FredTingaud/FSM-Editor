@@ -3,8 +3,6 @@ set(dummy_SRCS
     DummySettings.h
     dummy/DummyReader.cpp
     dummy/DummyReader.h
-    dummy/DummyState.h
-    dummy/DummyTransition.h
     dummy/DummyVisitor.cpp
     dummy/DummyVisitor.h
     dummy/DummyWriter.cpp

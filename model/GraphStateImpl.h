@@ -5,12 +5,13 @@
 #include <QString>
 #include <QPointF>
 
-class DummyState : public GraphState
+class GraphStateImpl : public GraphState
 {
 public:
-  DummyState(const QString& name)
+  GraphStateImpl(const QString& name)
     : name_(name)
   {}
+
   virtual QString visit(ExportVisitor& visitor) const override
   {
     throw std::exception("The method or operation is not implemented.");
