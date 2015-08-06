@@ -42,6 +42,9 @@ private:
 
 private:
   static const QString LAST_DIR_KEY;
+  static const QString LAST_ZOOM;
+  static const QString LAST_SPLITS;
+  static const QString LAST_GEOMETRY;
 
 private:
   Settings& settings_;

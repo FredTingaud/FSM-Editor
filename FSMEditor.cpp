@@ -13,19 +13,22 @@
 #include <QSettings>
 
 const QString FSMEditor::LAST_DIR_KEY = "last_dir";
+const QString FSMEditor::LAST_ZOOM = "last_zoom";
+const QString FSMEditor::LAST_SPLITS = "last_splits";
+const QString FSMEditor::LAST_GEOMETRY = "last_geometry";
 
 FSMEditor::FSMEditor(Settings& settings)
   : settings_(settings)
   , scene_([&](const QString& name){return settings_.validateStateName(name); })
   , fsmView_(&scene_, this)
 {
-  loadSettings();
-
   makeLuaEditor();
   addWidget(makeViewPanel());
   addWidget(editor_);
 
   connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
+
+  loadSettings();
 }
 
 FSMEditor::~FSMEditor()
@@ -61,12 +64,19 @@ void FSMEditor::saveSettings()
 {
   QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
   settings.setValue(LAST_DIR_KEY, lastDir_);
+  settings.setValue(LAST_ZOOM, fsmView_.transform().m11());
+  settings.setValue(LAST_GEOMETRY, saveGeometry());
+  settings.setValue(LAST_SPLITS, saveState());
 }
 
 void FSMEditor::loadSettings()
 {
   QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
   lastDir_ = settings.value(LAST_DIR_KEY, "").toString();
+  qreal scale = settings.value(LAST_ZOOM, 1.).toDouble();
+  fsmView_.scale(scale, scale);
+  restoreGeometry(settings.value(LAST_GEOMETRY).toByteArray());
+  restoreState(settings.value(LAST_SPLITS).toByteArray());
 }
 
 void FSMEditor::hideCode()
