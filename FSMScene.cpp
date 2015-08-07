@@ -183,6 +183,7 @@ Graph FSMScene::graph() const
 
 void FSMScene::setNewGraph(Graph&& graph)
 {
+  states_.clear();
   clear();
   startingState_ = nullptr;
   startAct_->setEnabled(false);
