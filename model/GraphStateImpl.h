@@ -8,8 +8,9 @@
 class GraphStateImpl : public GraphState
 {
 public:
-  GraphStateImpl(const QString& name)
+  GraphStateImpl(const QString& name, bool start = false)
     : name_(name)
+    , start_(start)
   {}
 
   virtual QString visit(ExportVisitor& visitor) const override
@@ -42,8 +43,14 @@ public:
     return code_;
   }
 
+  virtual bool isStart() const override
+  {
+    return start_;
+  }
+
 private:
   QString name_;
+  bool start_;
   QPointF pos_;
   QString code_;
 };

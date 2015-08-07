@@ -16,6 +16,7 @@ const qreal State::HEIGHT = 20;
 const qreal State::H_MARGIN = 4;
 const qreal State::V_MARGIN = 4;
 const QColor State::PEN_COLOR = QColor(190, 190, 190);
+const QColor State::START_PEN_COLOR = QColor(180, 235, 100);
 
 State::State(const QString& title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
@@ -23,6 +24,7 @@ State::State(const QString& title, const QPointF& position, std::function<void(Q
   , pushStack_(std::move(pushStack))
   , silent_(false)
   , dangling_(this)
+  , start_(false)
 {
   setPen(PEN_COLOR);
   setPos(position);
@@ -267,6 +269,25 @@ void State::askRename()
                            , QObject::tr("The state couldn't be renamed to %1 because of the following error:\n%2").arg(newName).arg(error));
     }
   }
+}
+
+bool State::isStart() const
+{
+  return start_;
+}
+
+void State::setStart(bool start)
+{
+  if (start)
+  {
+    setPen(START_PEN_COLOR);
+  }
+  else
+  {
+    setPen(PEN_COLOR);
+  }
+  start_ = start;
+  update();
 }
 
 Transition* State::getTransitionTo(State* destination) const

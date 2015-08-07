@@ -58,6 +58,8 @@ set(allSRCS
     undo/MoveStateCommand.h
     undo/RenameState.cpp
     undo/RenameState.h
+    undo/StartStateCommand.cpp
+    undo/StartStateCommand.h
     undo/UpdateCode.cpp
     undo/UpdateCode.h
     )

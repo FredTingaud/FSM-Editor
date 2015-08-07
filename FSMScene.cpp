@@ -4,10 +4,12 @@
 #include<fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddStateCommand.h>
 #include <fsm-editor/undo/RenameState.h>
+#include <fsm-editor/undo/StartStateCommand.h>
 #include <fsm-editor/undo/UpdateCode.h>
 
 #include<QGraphicsSceneMouseEvent>
 #include <QUndoCommand>
+#include <QAction>
 
 int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
@@ -15,9 +17,13 @@ const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
 FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
   : editingElement_(nullptr)
   , stateValidator_(stateValidator)
+  , startingState_(nullptr)
+  , startAct_(new QAction(tr("Start"), this))
 {
+  startAct_->setEnabled(false);
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
   connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
+  connect(startAct_, SIGNAL(triggered()), SLOT(setSelectionAsStartState()));
 }
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -43,7 +49,13 @@ void FSMScene::checkSelection()
   if (selectedItems().isEmpty())
   {
     editingElement_ = nullptr;
+    startAct_->setEnabled(false);
     Q_EMIT codeHidden();
+  }
+  else
+  {
+    State* state = dynamic_cast<State*>(selectedItems().at(0));
+    startAct_->setEnabled(state != nullptr);
   }
 }
 
@@ -53,6 +65,10 @@ State* FSMScene::addState(const QString& name, const QPointF& pos)
   states_.insert(std::pair<QString, State*>(name, item));
   addItem(item);
   setSelectedItem(item);
+  if (states_.size() == 1)
+  {
+    changeStartState(item);
+  }
   return item;
 }
 
@@ -128,6 +144,26 @@ void FSMScene::selectElement(const QString& element)
   }
 }
 
+State* FSMScene::getStartState() const
+{
+  return startingState_;
+}
+
+void FSMScene::setStartState(State* state)
+{
+  pushCommand(new StartStateCommand(this, state));
+}
+
+void FSMScene::changeStartState(State* start)
+{
+  if (startingState_)
+  {
+    startingState_->setStart(false);
+  }
+  startingState_ = start;
+  startingState_->setStart(true);
+}
+
 Graph FSMScene::graph() const
 {
   Graph result;
@@ -148,6 +184,9 @@ Graph FSMScene::graph() const
 void FSMScene::setNewGraph(Graph&& graph)
 {
   clear();
+  startingState_ = nullptr;
+  startAct_->setEnabled(false);
+
   for (auto state : graph.getAllStates())
   {
     auto res = addState(state->name(), state->getPosition());
@@ -159,6 +198,17 @@ void FSMScene::setNewGraph(Graph&& graph)
     auto dest = getState(transition->getDestinationState());
     res->transitionTo(dest, transition->getCode());
   }
+}
+
+void FSMScene::setSelectionAsStartState()
+{
+  State* state = dynamic_cast<State*>(selectedItems().at(0));
+  setStartState(state);
+}
+
+QAction* FSMScene::getStartAction() const
+{
+  return startAct_;
 }
 
 void FSMScene::setStateName(State* state, const QString& name)

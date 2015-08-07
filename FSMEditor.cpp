@@ -118,6 +118,8 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   QAction* zoomIn = toolbar->addAction("+");
   QAction* zoomOut = toolbar->addAction("-");
   toolbar->addSeparator();
+  toolbar->addAction(scene_.getStartAction());
+  toolbar->addSeparator();
   QAction* undo = undoStack_.createUndoAction(toolbar);
   undo->setShortcut(QKeySequence::Undo);
   toolbar->addAction(undo);

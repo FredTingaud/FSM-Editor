@@ -10,6 +10,8 @@ class State;
 class Transition;
 class FSMElement;
 class ExportVisitor;
+class QAction;
+
 class FSMScene : public QGraphicsScene
 {
   Q_OBJECT;
@@ -44,6 +46,26 @@ public:
 
   void selectElement(const QString& element);
 
+  /**
+   * @return The state the graph starts with.
+   */
+  State* getStartState() const;
+
+  /**
+   * Set the state the graph starts with.
+   */
+  void setStartState(State* start);
+
+  /**
+   * Method called by undo command don't call it directly.
+   */
+  void changeStartState(State* start);
+
+  /**
+   * @return An action allowing to set selected state as start state.
+   */
+  QAction* getStartAction() const;
+
   Graph graph() const;
   void setNewGraph(Graph&& graph);
 
@@ -55,11 +77,19 @@ public:
   };
 
 private:
+  /**
+   * Slot method called by start action.
+   */
+  Q_SLOT void setSelectionAsStartState();
+
+private:
   static int index;
   static const QColor BACKGROUND_COLOR;
 
 private:
   std::map<QString, State*> states_;
+  State* startingState_;
   FSMElement* editingElement_;
   std::function<QString(const QString&)> stateValidator_;
+  QAction* startAct_;
 };

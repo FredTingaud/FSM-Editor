@@ -65,12 +65,16 @@ public:
   void setName(const QString& name);
   void askRename();
 
+  void setStart(bool start);
+  virtual bool isStart() const override;
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
   static const qreal H_MARGIN;
   static const qreal V_MARGIN;
   static const QColor PEN_COLOR;
+  static const QColor START_PEN_COLOR;
 
 private:
   QString title_;
@@ -79,4 +83,5 @@ private:
   Transition dangling_;
   QList<Transition*> transitions_;
   QList<Transition*> pointingTransitions_;
+  bool start_;
 };
