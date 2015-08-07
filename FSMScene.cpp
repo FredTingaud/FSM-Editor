@@ -192,6 +192,10 @@ void FSMScene::setNewGraph(Graph&& graph)
   {
     auto res = addState(state->name(), state->getPosition());
     res->setCode(state->getCode());
+    if (state->isStart())
+    {
+      setStartState(res);
+    }
   }
   for (auto transition : graph.getAllTransitions())
   {

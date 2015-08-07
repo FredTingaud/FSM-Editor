@@ -17,6 +17,6 @@ public:
   virtual Graph read(QTextStream& inStream) override;
 
 private:
-  GraphState* readState(const QString& name, QTextStream& inStream);
+  GraphState* readState(const QString& name, bool start, QTextStream& inStream);
   GraphTransition* readTransition(const QString& origin, const QString& destination, QTextStream& inStream);
 };

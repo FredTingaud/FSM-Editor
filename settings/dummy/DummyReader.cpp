@@ -8,7 +8,7 @@
 Graph DummyReader::read(QTextStream& inStream)
 {
   Graph result;
-  QRegExp stateRegexp("!! State ([A-Za-z0-9_\\-]+) \\{");
+  QRegExp stateRegexp("!! (Starting )?State ([A-Za-z0-9_\\-]+) \\{");
   QRegExp transitionRegexp("!! Transition from ([A-Za-z0-9_\\-]+) to ([A-Za-z0-9_\\-]+) \\{");
   QList<GraphState*> states;
   QList<GraphTransition*> transitions;
@@ -17,7 +17,7 @@ Graph DummyReader::read(QTextStream& inStream)
     QString line = inStream.readLine();
     if (line.contains(stateRegexp))
     {
-      states.append(readState(stateRegexp.cap(1), inStream));
+      states.append(readState(stateRegexp.cap(2), !stateRegexp.cap(1).isEmpty(), inStream));
     }
     else if (line.contains(transitionRegexp))
     {
@@ -28,9 +28,9 @@ Graph DummyReader::read(QTextStream& inStream)
   return result;
 }
 
-GraphState* DummyReader::readState(const QString& name, QTextStream& inStream)
+GraphState* DummyReader::readState(const QString& name, bool start, QTextStream& inStream)
 {
-  GraphStateImpl* state = new GraphStateImpl(name);
+  GraphStateImpl* state = new GraphStateImpl(name, start);
   int openedBrackets = 1;
   QString code;
   QRegExp pos("\\} \\- ([0-9.\\-]+)\\:([0-9.\\-]+)");
