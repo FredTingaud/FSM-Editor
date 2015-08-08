@@ -36,11 +36,11 @@ void Transition::initialize()
 {
   auto flags = QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges;
   setFlags(flags);
-  initPos();
+  updatePos();
   updateVisibility();
 }
 
-void Transition::initPos()
+void Transition::updatePos()
 {
   prepareGeometryChange();
   setPos(origin_->pos());
@@ -193,7 +193,7 @@ State* Transition::destination() const
   return destination_;
 }
 
-void Transition::setParentOvered(bool hovered)
+void Transition::setParentHovered(bool hovered)
 {
   parentHovered_ = hovered;
   updateVisibility();
@@ -201,7 +201,7 @@ void Transition::setParentOvered(bool hovered)
 
 void Transition::updateVisibility()
 {
-  setVisible(destination_ != nullptr || parentHovered_ || hovered_);
+  setVisible(hasDestination() || parentHovered_ || hovered_);
 }
 
 QVariant Transition::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -299,7 +299,7 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
       if (child != nullptr && child != origin_)
       {
         origin_->pushCommand(new AddTransition(fsmScene(), origin_->name(), child->name()));
-        initPos();
+        updatePos();
         break;
       }
     }
@@ -309,7 +309,7 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void Transition::keyPressEvent(QKeyEvent *event)
 {
-  if (destination_ != nullptr && event->key() == Qt::Key_Delete)
+  if (hasDestination() && event->key() == Qt::Key_Delete)
   {
     origin_->pushCommand(new DeleteTransition(fsmScene(), origin_->name(), destination_->name()));
     event->accept();

@@ -1,5 +1,8 @@
 #pragma once
 
+/**
+ * Minimalistic implementation of the GraphState.
+ */
 #include <fsm-editor/model/GraphState.h>
 
 #include <QString>

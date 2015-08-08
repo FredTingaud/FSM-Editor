@@ -81,7 +81,7 @@ QVariant State::itemChange(GraphicsItemChange change, const QVariant &value)
   {
     if (scene())
     {
-      dangling_.initPos();
+      dangling_.updatePos();
       scene()->addItem(&dangling_);
     }
   }
@@ -99,12 +99,7 @@ void State::reactToPositionChange()
 {
   updateTransitionsPositions(transitions_);
   updateTransitionsPositions(pointingTransitions_);
-  dangling_.initPos();
-}
-
-void State::setSilentMove(bool silent)
-{
-  silent_ = silent;
+  dangling_.updatePos();
 }
 
 QString State::name() const
@@ -136,13 +131,13 @@ void State::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void State::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-  dangling_.setParentOvered(true);
+  dangling_.setParentHovered(true);
   super::hoverEnterEvent(event);
 }
 
 void State::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-  dangling_.setParentOvered(false);
+  dangling_.setParentHovered(false);
   super::hoverLeaveEvent(event);
 }
 
@@ -207,7 +202,7 @@ void State::setCode(const QString& code)
   scene()->setCode(this, getCode());
 }
 
-Transition* State::getElement(const QString& name) const
+Transition* State::getTransitionByName(const QString& name) const
 {
   for (Transition* transition : transitions_)
   {
@@ -239,10 +234,10 @@ QList<Transition*> State::getTransitions() const
 
 void State::silentlySetPosition(const QPointF& position)
 {
-  setSilentMove(true);
+  silent_ = true;
   setPos(position);
   reactToPositionChange();
-  setSilentMove(false);
+  silent_ = false;
 }
 
 QPointF State::getPosition() const
@@ -306,6 +301,6 @@ void State::updateTransitionsPositions(QList<Transition*>& transitions)
 {
   for (Transition* child : transitions)
   {
-    child->initPos();
+    child->updatePos();
   }
 }

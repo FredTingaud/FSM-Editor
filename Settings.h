@@ -1,5 +1,7 @@
 #pragma once
-
+/**
+ * Settings should be overridden, to customize the editor for each specific use-case.
+ */
 #include <QString>
 
 class FSMReader;

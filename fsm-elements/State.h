@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * View representation of a State of the Finite State Machine.
+ * @see GraphState
+ */
 #include <fsm-editor/fsm-elements/FSMElement.h>
 #include <fsm-editor/model/GraphState.h>
 #include <QGraphicsRectItem>
@@ -20,19 +24,7 @@ public:
 
   virtual ~State();
 
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
-
-  void shrinkTextToFit(QPainter * painter);
-
-  static bool fitInRect(const QRectF& rect, const QRect& bounding);
-
-  virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-
   void reactToPositionChange();
-
-  void updateTransitionsPositions(QList<Transition*>& transitions);
-
-  void setSilentMove(bool silent);
 
   virtual QString name() const override;
 
@@ -41,32 +33,107 @@ public:
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
-  FSMScene* scene() const;
+  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
+  virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
+  /**
+   * Push a command to the undo stack.
+   */
   void pushCommand(QUndoCommand* command);
 
+  /**
+   * This method is called by the undo stack and shouldn't be called directly.
+   * Create a transition to another state.
+   */
   void transitionTo(State* destination, const QString& code = "");
+  /**
+  * This method is called by the undo stack and shouldn't be called directly.
+  * Remove a transition to another state.
+  */
   void removeTransitionTo(State* destination);
-  Transition* getTransitionTo(State* destinationState) const;
 
-  void setPointedBy(Transition* transition, bool pointed);
+  /**
+   * @return The transition from this state to @param destinationState. nullptr if it
+   * doesn't exist.
+   */
+  Transition* getTransitionTo(State* destinationState) const;
 
   virtual QString getCode() const override;
   virtual void setCode(const QString& code) override;
 
-  Transition* getElement(const QString& name) const;
+  /**
+   * @return The transition with passed name. nullptr if it is not present.
+   */
+  Transition* getTransitionByName(const QString& name) const;
 
   virtual QString visit(ExportVisitor& visitor) const override;
 
+  /**
+   * @return All transitions having this state as either source or destination.
+   */
   QList<Transition*> getAllRelatedTransitions() const;
+
+  /**
+  * @return All transitions having this state as source.
+  */
   QList<Transition*> getTransitions() const;
 
+  /**
+   * This method is called by the undo stack and shouldn't be called directly.
+   * Change state position in the scene.
+   */
   void silentlySetPosition(const QPointF& position);
+  /**
+   * @return The State position in the scene.
+   */
   virtual QPointF getPosition() const override;
+
+  /**
+   * This method is called by the undo stack and shouldn't be called directly.
+   * Change the name and update the text drawn on it.
+   */
   void setName(const QString& name);
+
+  /**
+   * Open an input dialog and call rename on the state if input text is a valid name.
+   */
   void askRename();
 
+  /**
+   * Sets whether this is a start state.
+   */
   void setStart(bool start);
+
+  /**
+   * @return whether this is a start date.
+   */
   virtual bool isStart() const override;
+
+private:
+  /**
+   * Make sure the name is fully displayed in the state rectangle.
+   */
+  void shrinkTextToFit(QPainter * painter);
+
+  /**
+   * @return whether rect is completely inside bounding.
+   */
+  static bool fitInRect(const QRectF& rect, const QRect& bounding);
+
+  /**
+   * Redraw transitions after moving.
+   */
+  void updateTransitionsPositions(QList<Transition*>& transitions);
+
+  /**
+   * Add or remove a pointed-by transition.
+   */
+  void setPointedBy(Transition* transition, bool pointed);
+
+  /**
+   * @return cast scene.
+   */
+  FSMScene* scene() const;
 
 private:
   static const qreal WIDTH;

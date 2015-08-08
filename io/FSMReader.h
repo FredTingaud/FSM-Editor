@@ -12,6 +12,7 @@ public:
   /**
    * Read from an inputStream and outputs a graph.
    * @return The loaded graph.
+   * @see Graph.
    */
   virtual Graph read(QTextStream& inStream) = 0;
 };

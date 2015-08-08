@@ -108,7 +108,7 @@ Transition* FSMScene::getTransition(const QString& name) const
 {
   for (auto&& it : states_)
   {
-    auto element = it.second->getElement(name);
+    auto element = it.second->getTransitionByName(name);
     if (element != nullptr)
     {
       return element;

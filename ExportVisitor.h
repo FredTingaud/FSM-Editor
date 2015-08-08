@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * Utility class, to simplify writers creation.
+ * ExportVisitor can visit both states and transitions.
+ */
 #include <QString>
 
 class GraphState;
