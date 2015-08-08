@@ -46,17 +46,6 @@ public:
   Q_SIGNAL void codeHidden();
 
   /**
-   * Called by undo/redo methods, that shouldn't be called directly.
-   * Creates a new state in the scene.
-   */
-  State* addState(const QString& name, const QPointF& pos);
-  /**
-   * Called by undo/redo methods, it shouldn't be called directly.
-   * Remove a state by its name.
-   */
-  void removeState(const QString& name);
-
-  /**
    * Get a state by its name.
    */
   State* getState(const QString& name) const;
@@ -75,11 +64,6 @@ public:
   QString renameState(State* state, const QString& newName);
 
   /**
-   * Method called only by the undo commands, to modify the state name.
-   */
-  void setStateName(State* state, const QString& name);
-
-  /**
    * Sets the current element and its code without triggering the undo/redo stack.
    * Used when changing the selection or when undo/redo is already handled otherwise.
    */
@@ -91,7 +75,7 @@ public:
   void updateCode(const QString& code);
 
   /**
-   * Method called by undo/redo, to select an element by its name.
+   * Select an element by its name.
    */
   void selectElement(const QString& element);
 
@@ -109,11 +93,6 @@ public:
    * Set the state the graph starts with.
    */
   void setStartState(State* start);
-
-  /**
-   * Method called by undo command don't call it directly.
-   */
-  void changeStartState(State* start);
 
   /**
    * @return An action allowing to set selected state as start state.
@@ -144,6 +123,31 @@ public:
   };
 
 private:
+  friend class AddStateCommand;
+  friend class DeleteStateCommand;
+  friend class RenameState;
+  friend class StartStateCommand;
+  /**
+  * Method called only by the undo commands, don't call it directly.
+  * Creates a new state in the scene.
+  */
+  State* addState(const QString& name, const QPointF& pos);
+  /**
+  * Method called only by the undo commands, don't call it directly.
+  * Remove a state by its name.
+  */
+  void removeState(const QString& name);
+
+  /**
+  * Method called only by the undo commands, don't call it directly.
+  */
+  void changeStartState(State* start);
+
+  /**
+   * Method called only by the undo commands, to modify the state name.
+   */
+  void setStateName(State* state, const QString& name);
+
   /**
    * Slot method called by start action.
    */
