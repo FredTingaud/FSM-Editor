@@ -69,8 +69,9 @@ set(linkLibraries
     Qt5::Gui
     )
 
-source_group("elements" REGULAR_EXPRESSION fsm-elements/*)
-source_group("io" REGULAR_EXPRESSION io/*)
+source_group("elements" REGULAR_EXPRESSION fsm-elements/)
+source_group("io" REGULAR_EXPRESSION io/)
+source_group("undo" REGULAR_EXPRESSION undo/)
 
 add_library(FSM-lib ${allSRCS})
 target_link_libraries(FSM-lib ${linkLibraries})
