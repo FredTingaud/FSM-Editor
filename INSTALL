@@ -1,0 +1,6 @@
+This is a CMake project, that depends on Qt5. To install, you just need to call cmake on the root directory, from the folder you want generated files to be created into.
+This far, the only necessary CMake variable is the path to Qt5 CMake files.
+
+mkdir _generated
+cd _generated
+cmake path/to/fsm-editor -D Qt5Widgets_DIR=/path/to/qt5/lib/cmake/Qt5Widgets

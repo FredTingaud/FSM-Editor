@@ -1,0 +1,13 @@
+FSM Editor
+
+FSM Editor is a small implementation of a graphical editor for Finite State Machines.
+It can be customized to save and load FSM graphs to any format or language by overriding the Settings class. It can also be embedded in another Qt project.
+FSM Editor can run on any platform supported by Qt, including Windows, Unix and Mac OS.
+
+Dependencies are:
+- Qt 5.X
+- CMake 3.X
+
+If necessary, it should be possible to compile it with Qt4 by just adapting the CMake scpripts.
+
+See INSTALL for compilation instructions.
