@@ -55,6 +55,7 @@ void FSMEditor::makeLuaEditor()
 {
   editor_ = new QPlainTextEdit(this);
   editor_->setPlainText("function sample code");
+  settings_.initializeCodeHighlighter(editor_->document());
   connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
