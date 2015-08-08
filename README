@@ -11,3 +11,5 @@ Dependencies are:
 If necessary, it should be possible to compile it with Qt4 by just adapting the CMake scpripts.
 
 See INSTALL for compilation instructions.
+
+See LICENSE for licensing information.
