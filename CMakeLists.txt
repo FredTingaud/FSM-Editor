@@ -70,7 +70,7 @@ set(linkLibraries
     )
 
 source_group("elements" REGULAR_EXPRESSION fsm-elements/*)
-source_group("io" REGULAR_EXPRESSION fsm-elements/*)
+source_group("io" REGULAR_EXPRESSION io/*)
 
 add_library(FSM-lib ${allSRCS})
 target_link_libraries(FSM-lib ${linkLibraries})
