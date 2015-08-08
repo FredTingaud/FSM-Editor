@@ -1,5 +1,9 @@
 #pragma once
 
+/**
+ * FSMScene displays the graph. It manipulates both the graphical components and the model.
+ * It is bad architecture, but it is the standard one in Qt.
+ */
 #include <QGraphicsScene>
 #include <fsm-editor/model/Graph.h>
 
@@ -18,33 +22,83 @@ class FSMScene : public QGraphicsScene
 public:
   FSMScene(std::function<QString(const QString&)> stateValidator);
 
+  /**
+   * Overrides double click handling, to create a state when double clicking.
+   */
   virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
+  /**
+   * Push a command in the undo/redo stack.
+   */
   void pushCommand(QUndoCommand* command);
 
+  /**
+   * Signal emitted when a command was pushed.
+   */
   Q_SIGNAL void command(QUndoCommand* command);
+  /**
+   * Signal emitted when the current code is changed.
+   */
   Q_SIGNAL void codeChanged(const QString& code);
+  /**
+   * Signal emitted when the current code is hidden.
+   */
   Q_SIGNAL void codeHidden();
 
-  Q_SLOT void checkSelection();
-
+  /**
+   * Called by undo/redo methods, that shouldn't be called directly.
+   * Creates a new state in the scene.
+   */
   State* addState(const QString& name, const QPointF& pos);
-
-  void setSelectedItem(QGraphicsItem* item);
-
+  /**
+   * Called by undo/redo methods, it shouldn't be called directly.
+   * Remove a state by its name.
+   */
   void removeState(const QString& name);
-  State* getState(const QString& name) const;
-  FSMElement* getElement(const QString& name) const;
 
+  /**
+   * Get a state by its name.
+   */
+  State* getState(const QString& name) const;
+  /**
+   * Get any graph element by its name.
+   */
+  FSMElement* getElement(const QString& name) const;
+  /**
+   * Get a transition by its name.
+   */
   Transition* getTransition(const QString& name) const;
 
+  /**
+   * Change the name of the state, creating an undo command.
+   */
   QString renameState(State* state, const QString& newName);
+
+  /**
+   * Method called only by the undo commands, to modify the state name.
+   */
   void setStateName(State* state, const QString& name);
 
+  /**
+   * Sets the current element and its code without triggering the undo/redo stack.
+   * Used when changing the selection or when undo/redo is already handled otherwise.
+   */
   void setCode(FSMElement* element, const QString& code);
+
+  /**
+   * Change the code of the selection, passing through the undo/redo stack.
+   */
   void updateCode(const QString& code);
 
+  /**
+   * Method called by undo/redo, to select an element by its name.
+   */
   void selectElement(const QString& element);
+
+  /**
+   * Sets the selection to this item only and give it focus.
+   */
+  void setSelectedItem(QGraphicsItem* item);
 
   /**
    * @return The state the graph starts with.
@@ -66,10 +120,23 @@ public:
    */
   QAction* getStartAction() const;
 
+  /**
+   * Classes outside the QGraphicsScene should handle model objects,
+   * not directly the graphics item. We want to be able to change the
+   * architecture in the future.
+   * @return model version of the graph.
+   */
   Graph graph() const;
+
+  /**
+   * Replaces current graph with the passed one.
+   */
   void setNewGraph(Graph&& graph);
 
 public:
+  /**
+   * Ids used by the QUndoCommands to merge some changes.
+   */
   enum UNDO_IDS
   {
     UNDO_MOVE = 1,
@@ -81,6 +148,11 @@ private:
    * Slot method called by start action.
    */
   Q_SLOT void setSelectionAsStartState();
+
+  /**
+   * Update internal state on selection change.
+   */
+  Q_SLOT void checkSelection();
 
 private:
   static int index;

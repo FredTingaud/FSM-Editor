@@ -1,5 +1,12 @@
 #pragma once
 
+/**
+ * Main class of the FSM Editor project.
+ * Include this QWidget in your application to use it.
+ * The FSMEditor takes a Settings object in its constructor, that allows to customize the
+ * editor, depending on the use-case.
+ */
+
 #include <QSplitter>
 
 #include <fsm-editor/FSMScene.h>
@@ -18,25 +25,38 @@ public:
   FSMEditor(Settings& settings);
   virtual ~FSMEditor();
 
+  /**
+   * Zoom in, in the graph view.
+   */
   Q_SLOT void zoomIn();
+  /**
+  * Zoom out, in the graph view.
+  */
   Q_SLOT void zoomOut();
+
+  /**
+   * Call a file dialog and save in the selected file.
+   */
+  Q_SLOT void saveAs();
+  /**
+   * Call a file dialog and load from the selected file.
+   */
+  Q_SLOT void load();
 
 private:
   Q_SLOT void stackCommand(QUndoCommand* command);
   Q_SLOT void transferCodeChanged();
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
-  Q_SLOT void save();
-  Q_SLOT void load();
 
   void saveLastDir(QString fileName);
 
 private:
   QWidget* makeViewPanel();
+  void makeLuaEditor();
 
   void createSceneActions(QToolBar* toolbar);
 
-  void makeLuaEditor();
   void loadSettings();
   void saveSettings();
 

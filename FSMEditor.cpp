@@ -133,11 +133,11 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   importAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
-  connect(exportAction, SIGNAL(triggered()), SLOT(save()));
+  connect(exportAction, SIGNAL(triggered()), SLOT(saveAs()));
   connect(importAction, SIGNAL(triggered()), SLOT(load()));
 }
 
-void FSMEditor::save()
+void FSMEditor::saveAs()
 {
   QString fileName = QFileDialog::getSaveFileName(0, tr("Save Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
   if (fileName.isNull())
