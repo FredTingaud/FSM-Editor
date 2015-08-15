@@ -111,4 +111,5 @@ private:
   QPlainTextEdit* editor_;
   QString lastDir_;
   QString currentFile_;
+  QAction* saveAction_;
 };

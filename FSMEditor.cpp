@@ -22,12 +22,14 @@ FSMEditor::FSMEditor(Settings& settings)
   : settings_(settings)
   , scene_([&](const QString& name){return settings_.validateStateName(name); })
   , fsmView_(&scene_, this)
+  , saveAction_(nullptr)
 {
   Q_INIT_RESOURCE(resources);
   makeLuaEditor();
   addWidget(makeViewPanel());
   addWidget(editor_);
 
+  modifiedChanged(true);
   setCurrentFile("");
 
   connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
@@ -130,6 +132,10 @@ void FSMEditor::hideCode()
 void FSMEditor::modifiedChanged(bool undoClean)
 {
   setWindowModified(!undoClean);
+  if (saveAction_)
+  {
+    saveAction_->setEnabled(!undoClean);
+  }
 }
 
 void FSMEditor::displaySetCode(const QString& code)
@@ -176,14 +182,14 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   toolbar->addSeparator();
   QAction* newAction = toolbar->addAction(tr("New"));
   newAction->setShortcut(QKeySequence::New);
-  QAction* saveAction = toolbar->addAction(tr("Save"));
-  saveAction->setShortcut(QKeySequence::Save);
+  saveAction_ = toolbar->addAction(tr("Save"));
+  saveAction_->setShortcut(QKeySequence::Save);
   QAction* openAction = toolbar->addAction(tr("Open"));
   openAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
   connect(newAction, SIGNAL(triggered()), SLOT(newGraph()));
-  connect(saveAction, SIGNAL(triggered()), SLOT(save()));
+  connect(saveAction_, SIGNAL(triggered()), SLOT(save()));
   connect(openAction, SIGNAL(triggered()), SLOT(open()));
 }
 
