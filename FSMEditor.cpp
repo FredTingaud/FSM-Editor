@@ -76,6 +76,17 @@ void FSMEditor::zoomOut()
   fsmView_.scale(0.8, 0.8);
 }
 
+bool FSMEditor::newGraph()
+{
+  if (maybeSave())
+  {
+    setCurrentFile("");
+    scene_.setNewGraph(Graph());
+    return true;
+  }
+  return false;
+}
+
 void FSMEditor::stackCommand(QUndoCommand* command)
 {
   undoStack_.push(command);
@@ -163,12 +174,15 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   redo->setShortcut(QKeySequence::Redo);
   toolbar->addAction(redo);
   toolbar->addSeparator();
+  QAction* newAction = toolbar->addAction(tr("New"));
+  newAction->setShortcut(QKeySequence::New);
   QAction* saveAction = toolbar->addAction(tr("Save"));
   saveAction->setShortcut(QKeySequence::Save);
   QAction* openAction = toolbar->addAction(tr("Open"));
   openAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
+  connect(newAction, SIGNAL(triggered()), SLOT(newGraph()));
   connect(saveAction, SIGNAL(triggered()), SLOT(save()));
   connect(openAction, SIGNAL(triggered()), SLOT(open()));
 }

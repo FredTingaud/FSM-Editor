@@ -180,14 +180,17 @@ Graph FSMScene::graph() const
   result.setData(std::move(everyStates), std::move(everyTransitions));
   return result;
 }
-
-void FSMScene::setNewGraph(Graph&& graph)
+void FSMScene::clearAll()
 {
   states_.clear();
   clear();
   startingState_ = nullptr;
   startAct_->setEnabled(false);
+}
 
+void FSMScene::setNewGraph(Graph&& graph)
+{
+  clearAll();
   for (auto state : graph.getAllStates())
   {
     auto res = addState(state->name(), state->getPosition());

@@ -35,6 +35,12 @@ public:
   Q_SLOT void zoomOut();
 
   /**
+   * Open a new empty graph.
+   * @return Whether the new graph was actually opened.
+   */
+  Q_SLOT bool newGraph();
+
+  /**
    * Call a file dialog and save in the selected file.
    * @return Whether the file was actually saved.
    */

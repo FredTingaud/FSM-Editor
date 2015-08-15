@@ -158,6 +158,11 @@ private:
    */
   Q_SLOT void checkSelection();
 
+  /**
+   * Clear everything in the scene and memory.
+   */
+  void clearAll();
+
 private:
   static int index;
   static const QColor BACKGROUND_COLOR;
