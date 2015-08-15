@@ -8,6 +8,8 @@ Dependencies are:
 - Qt 5.X
 - CMake 3.X
 
+Icons are from Google Material Design pack, licensed under the Creative Common Attribution 4.0 International License (CC-BY 4.0).
+
 If necessary, it should be possible to compile it with Qt4 by just adapting the CMake scpripts.
 
 See INSTALL for compilation instructions.

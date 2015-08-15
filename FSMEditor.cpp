@@ -22,6 +22,7 @@ FSMEditor::FSMEditor(Settings& settings)
   , scene_([&](const QString& name){return settings_.validateStateName(name); })
   , fsmView_(&scene_, this)
 {
+  Q_INIT_RESOURCE(resources);
   makeLuaEditor();
   addWidget(makeViewPanel());
   addWidget(editor_);
@@ -34,6 +35,7 @@ FSMEditor::FSMEditor(Settings& settings)
 FSMEditor::~FSMEditor()
 {
   saveSettings();
+  Q_CLEANUP_RESOURCE(resources);
 }
 
 void FSMEditor::zoomIn()
@@ -116,8 +118,8 @@ QWidget* FSMEditor::makeViewPanel()
 
 void FSMEditor::createSceneActions(QToolBar* toolbar)
 {
-  QAction* zoomIn = toolbar->addAction("+");
-  QAction* zoomOut = toolbar->addAction("-");
+  QAction* zoomIn = toolbar->addAction(QIcon(":/ic_zoom_in.png"), tr("Zoom In"));
+  QAction* zoomOut = toolbar->addAction(QIcon(":/ic_zoom_out.png"), tr("Zoom Out"));
   toolbar->addSeparator();
   toolbar->addAction(scene_.getStartAction());
   toolbar->addSeparator();

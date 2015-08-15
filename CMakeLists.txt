@@ -24,6 +24,8 @@ set(CMAKE_AUTOMOC ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
+QT5_ADD_RESOURCES(RESOURCES resources/resources.qrc)
+
 set(allSRCS
     ExportVisitor.h
     FSMEditor.cpp
@@ -62,6 +64,7 @@ set(allSRCS
     undo/StartStateCommand.h
     undo/UpdateCode.cpp
     undo/UpdateCode.h
+    ${RESOURCES}
     )
 
 set(linkLibraries

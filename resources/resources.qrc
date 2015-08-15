@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file>ic_home.png</file>
+    <file>ic_zoom_in.png</file>
+    <file>ic_zoom_out.png</file>
+  </qresource>
+</RCC>
