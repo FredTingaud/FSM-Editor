@@ -128,9 +128,9 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   redo->setShortcut(QKeySequence::Redo);
   toolbar->addAction(redo);
   toolbar->addSeparator();
-  QAction* exportAction = toolbar->addAction("Export");
+  QAction* exportAction = toolbar->addAction(tr("Save"));
   exportAction->setShortcut(QKeySequence::Save);
-  QAction* importAction = toolbar->addAction("Import");
+  QAction* importAction = toolbar->addAction(tr("Open"));
   importAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));

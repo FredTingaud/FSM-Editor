@@ -5,7 +5,7 @@
 #include <QTransform>
 
 AddStateCommand::AddStateCommand(FSMScene* scene, const QString& name, const QPointF& position)
-  : QUndoCommand(QString("Create state %1").arg(name))
+  : QUndoCommand(QObject::tr("create state %1", "Append to Undo").arg(name))
   , scene_(scene)
   , name_(name)
   , pos_(position)

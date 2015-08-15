@@ -4,7 +4,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 DeleteTransition::DeleteTransition(FSMScene* scene, const QString& origin, const QString& destination)
-  : QUndoCommand(QString("Delete transition from %1 to %2").arg(origin).arg(destination))
+  : QUndoCommand(QObject::tr("delete transition from %1 to %2", "Append to Undo").arg(origin).arg(destination))
   , scene_(scene)
   , origin_(origin)
   , destination_(destination)

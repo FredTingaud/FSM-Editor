@@ -4,7 +4,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 StartStateCommand::StartStateCommand(FSMScene* scene, State* state)
-  : QUndoCommand(QObject::tr("Change start state to %1").arg(state->name()))
+  : QUndoCommand(QObject::tr("change start state to %1", "Append to Undo").arg(state->name()))
   , scene_(scene)
   , previousStart_(scene->getStartState()->name())
   , nextStart_(state->name())

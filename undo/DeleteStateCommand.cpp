@@ -6,7 +6,7 @@
 #include <QTransform>
 
 DeleteStateCommand::DeleteStateCommand(FSMScene* scene, State* state)
-  : QUndoCommand(QString("Delete state %1").arg(state->name()))
+  : QUndoCommand(QObject::tr("delete state %1", "Append to Undo").arg(state->name()))
   , scene_(scene)
   , name_(state->name())
   , pos_(state->pos())

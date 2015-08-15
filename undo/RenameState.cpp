@@ -3,7 +3,7 @@
 #include <fsm-editor/FSMScene.h>
 
 RenameState::RenameState(FSMScene* scene, const QString& oldName, const QString& newName)
-  : QUndoCommand(QString("Rename state %1 to %2").arg(oldName).arg(newName))
+  : QUndoCommand(QObject::tr("rename state %1 to %2", "Append to Undo").arg(oldName).arg(newName))
   , scene_(scene)
   , oldName_(oldName)
   , newName_(newName)

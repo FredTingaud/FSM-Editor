@@ -5,7 +5,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 UpdateCode::UpdateCode(FSMScene* scene, const QString& element, const QString& newCode)
-  : QUndoCommand(QString("Change code for %1").arg(scene->getElement(element)->name()))
+  : QUndoCommand(QObject::tr("change code for %1", "Append to Undo").arg(scene->getElement(element)->name()))
   , scene_(scene)
   , element_(element)
   , previousCode_(scene->getElement(element)->getCode())

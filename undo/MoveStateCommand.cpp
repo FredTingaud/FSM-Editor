@@ -3,7 +3,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 
 MoveStateCommand::MoveStateCommand(FSMScene* scene, const QString& name, const QPointF& position, State* state)
-  : QUndoCommand(QString("Move state %1").arg(name))
+  : QUndoCommand(QObject::tr("move state %1", "Append to Undo").arg(name))
   , first_(true)
   , scene_(scene)
   , name_(name)
