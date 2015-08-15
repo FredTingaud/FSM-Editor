@@ -46,4 +46,11 @@ public:
    * @Default accepts everything.
    */
   virtual QString validateStateName(const QString& name);
+
+  /**
+   * @return Whether the "New", "Open" and "Save" actions are accessible.
+   * When the editor is embedded, it can be convenient to hide them and drive
+   * open/save at a higher level.
+   */
+  virtual bool showFileActions();
 };

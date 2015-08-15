@@ -35,3 +35,8 @@ QString Settings::validateStateName(const QString& name)
 {
   return "";
 }
+
+bool Settings::showFileActions()
+{
+  return true;
+}

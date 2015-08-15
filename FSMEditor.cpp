@@ -159,19 +159,37 @@ QWidget* FSMEditor::makeViewPanel()
   QWidget* viewPanel = new QWidget(this);
   QLayout* vLayout = new QVBoxLayout;
   QToolBar* toolbar = new QToolBar(this);
-  createSceneActions(toolbar);
+  fillToolbar(toolbar);
   vLayout->addWidget(toolbar);
   vLayout->addWidget(&fsmView_);
   viewPanel->setLayout(vLayout);
   return viewPanel;
 }
 
-void FSMEditor::createSceneActions(QToolBar* toolbar)
+void FSMEditor::fillToolbar(QToolBar* toolbar)
+{
+  createZoomActions(toolbar);
+  createElementActions(toolbar);
+  createUndoRedoActions(toolbar);
+  createFileActions(toolbar);
+}
+
+void FSMEditor::createZoomActions(QToolBar* toolbar)
 {
   QAction* zoomIn = toolbar->addAction(QIcon(":/ic_zoom_in.png"), tr("Zoom In"));
   QAction* zoomOut = toolbar->addAction(QIcon(":/ic_zoom_out.png"), tr("Zoom Out"));
+  connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
+  connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
+}
+
+void FSMEditor::createElementActions(QToolBar* toolbar)
+{
   toolbar->addSeparator();
   toolbar->addAction(scene_.getStartAction());
+}
+
+void FSMEditor::createUndoRedoActions(QToolBar* toolbar)
+{
   toolbar->addSeparator();
   QAction* undo = undoStack_.createUndoAction(toolbar);
   undo->setShortcut(QKeySequence::Undo);
@@ -179,18 +197,24 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   QAction* redo = undoStack_.createRedoAction(toolbar);
   redo->setShortcut(QKeySequence::Redo);
   toolbar->addAction(redo);
-  toolbar->addSeparator();
-  QAction* newAction = toolbar->addAction(tr("New"));
-  newAction->setShortcut(QKeySequence::New);
-  saveAction_ = toolbar->addAction(tr("Save"));
-  saveAction_->setShortcut(QKeySequence::Save);
-  QAction* openAction = toolbar->addAction(tr("Open"));
-  openAction->setShortcut(QKeySequence::Open);
-  connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
-  connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
-  connect(newAction, SIGNAL(triggered()), SLOT(newGraph()));
-  connect(saveAction_, SIGNAL(triggered()), SLOT(save()));
-  connect(openAction, SIGNAL(triggered()), SLOT(open()));
+}
+
+void FSMEditor::createFileActions(QToolBar* toolbar)
+{
+  if (settings_.showFileActions())
+  {
+    toolbar->addSeparator();
+    QAction* newAction = toolbar->addAction(tr("New"));
+    newAction->setShortcut(QKeySequence::New);
+    saveAction_ = toolbar->addAction(tr("Save"));
+    saveAction_->setShortcut(QKeySequence::Save);
+    QAction* openAction = toolbar->addAction(tr("Open"));
+    openAction->setShortcut(QKeySequence::Open);
+
+    connect(newAction, SIGNAL(triggered()), SLOT(newGraph()));
+    connect(saveAction_, SIGNAL(triggered()), SLOT(save()));
+    connect(openAction, SIGNAL(triggered()), SLOT(open()));
+  }
 }
 
 bool FSMEditor::save()
