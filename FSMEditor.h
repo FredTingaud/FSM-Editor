@@ -36,12 +36,33 @@ public:
 
   /**
    * Call a file dialog and save in the selected file.
+   * @return Whether the file was actually saved.
    */
-  Q_SLOT void saveAs();
+  Q_SLOT bool saveAs();
+
   /**
-   * Call a file dialog and load from the selected file.
+   * Save in the current file if any, call "save as" otherwise.
+   * @return Whether the file was actually saved.
    */
-  Q_SLOT void load();
+  Q_SLOT bool save();
+
+  /**
+   * Save in passed file.
+   * @return Whether the file was actually saved.
+   */
+  Q_SLOT bool save(const QString& fileName);
+
+  /**
+   * Call a file dialog and open the selected file.
+   * @return Whether the file was actually opened.
+   */
+  Q_SLOT bool open();
+
+  /**
+  * Open the passed file.
+  * @return Whether the file was actually opened.
+  */
+  Q_SLOT bool open(const QString& fileName);
 
 private:
   Q_SLOT void stackCommand(QUndoCommand* command);
@@ -49,7 +70,7 @@ private:
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
 
-  void saveLastDir(QString fileName);
+  void setCurrentFile(QString fileName);
 
 private:
   QWidget* makeViewPanel();
@@ -74,4 +95,5 @@ private:
   QUndoStack undoStack_;
   QPlainTextEdit* editor_;
   QString lastDir_;
+  QString currentFile_;
 };

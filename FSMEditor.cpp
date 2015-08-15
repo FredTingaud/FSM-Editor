@@ -130,52 +130,77 @@ void FSMEditor::createSceneActions(QToolBar* toolbar)
   redo->setShortcut(QKeySequence::Redo);
   toolbar->addAction(redo);
   toolbar->addSeparator();
-  QAction* exportAction = toolbar->addAction(tr("Save"));
-  exportAction->setShortcut(QKeySequence::Save);
-  QAction* importAction = toolbar->addAction(tr("Open"));
-  importAction->setShortcut(QKeySequence::Open);
+  QAction* saveAction = toolbar->addAction(tr("Save"));
+  saveAction->setShortcut(QKeySequence::Save);
+  QAction* openAction = toolbar->addAction(tr("Open"));
+  openAction->setShortcut(QKeySequence::Open);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
-  connect(exportAction, SIGNAL(triggered()), SLOT(saveAs()));
-  connect(importAction, SIGNAL(triggered()), SLOT(load()));
+  connect(saveAction, SIGNAL(triggered()), SLOT(save()));
+  connect(openAction, SIGNAL(triggered()), SLOT(open()));
 }
 
-void FSMEditor::saveAs()
+bool FSMEditor::save()
+{
+  if (currentFile_.isEmpty())
+  {
+    return saveAs();
+  }
+  else
+  {
+    return save(currentFile_);
+  }
+}
+
+bool FSMEditor::saveAs()
 {
   QString fileName = QFileDialog::getSaveFileName(0, tr("Save Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
   if (fileName.isNull())
-    return;
+    return false;
   if (!fileName.endsWith(settings_.getExportExtension()))
   {
     fileName += "." + settings_.getExportExtension();
   }
+  setCurrentFile(fileName);
+  return save(fileName);
+}
+
+bool FSMEditor::save(const QString& fileName)
+{
   QFile file(fileName);
-  saveLastDir(fileName);
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-    return;
+    return false;
 
   QTextStream out(&file);
 
   settings_.getWriter().write(scene_.graph(), out);
+  return true;
 }
 
-void FSMEditor::saveLastDir(QString fileName)
+void FSMEditor::setCurrentFile(QString fileName)
 {
   lastDir_ = QFileInfo(fileName).absolutePath();
+  currentFile_ = fileName;
 }
 
-void FSMEditor::load()
+bool FSMEditor::open()
 {
   QString fileName = QFileDialog::getOpenFileName(0, tr("Open Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
   if (fileName.isNull())
-    return;
+    return false;
+  return open(fileName);
+}
+
+bool FSMEditor::open(const QString& fileName)
+{
+  setCurrentFile(fileName);
   QFile file(fileName);
-  saveLastDir(fileName);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return;
+    return false;
 
   QTextStream in(&file);
 
   scene_.setNewGraph(settings_.getReader().read(in));
   undoStack_.clear();
+  return true;
 }
