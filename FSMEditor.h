@@ -64,11 +64,15 @@ public:
   */
   Q_SLOT bool open(const QString& fileName);
 
+protected:
+  virtual void closeEvent(QCloseEvent *event) override;
+
 private:
   Q_SLOT void stackCommand(QUndoCommand* command);
   Q_SLOT void transferCodeChanged();
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
+  Q_SLOT void modifiedChanged(bool undoClean);
 
   void setCurrentFile(QString fileName);
 
@@ -80,6 +84,11 @@ private:
 
   void loadSettings();
   void saveSettings();
+
+  /**
+   * Make sure everything is saved or discarded on purpose, before whipping the scene.
+   */
+  bool maybeSave();
 
 private:
   static const QString LAST_DIR_KEY;

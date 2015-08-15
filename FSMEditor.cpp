@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QSettings>
+#include <QMessageBox>
 
 const QString FSMEditor::LAST_DIR_KEY = "last_dir";
 const QString FSMEditor::LAST_ZOOM = "last_zoom";
@@ -27,8 +28,10 @@ FSMEditor::FSMEditor(Settings& settings)
   addWidget(makeViewPanel());
   addWidget(editor_);
 
-  connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
+  setCurrentFile("");
 
+  connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
+  connect(&undoStack_, SIGNAL(cleanChanged(bool)), SLOT(modifiedChanged(bool)));
   loadSettings();
 }
 
@@ -36,6 +39,31 @@ FSMEditor::~FSMEditor()
 {
   saveSettings();
   Q_CLEANUP_RESOURCE(resources);
+}
+
+void FSMEditor::closeEvent(QCloseEvent *event)
+{
+  if (maybeSave())
+  {
+    event->accept();
+  }
+  else
+  {
+    event->ignore();
+  }
+}
+
+bool FSMEditor::maybeSave()
+{
+  if (isWindowModified())
+  {
+    QMessageBox::StandardButton res = QMessageBox::warning(this, tr("Graph was modified"), tr("The current graph was modified since last save.\nDo you want to save changes?"), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+    if (res == QMessageBox::Cancel)
+      return false;
+    if (res == QMessageBox::Save)
+      return save();
+  }
+  return true;
 }
 
 void FSMEditor::zoomIn()
@@ -86,6 +114,11 @@ void FSMEditor::hideCode()
 {
   editor_->clear();
   editor_->setEnabled(false);
+}
+
+void FSMEditor::modifiedChanged(bool undoClean)
+{
+  setWindowModified(!undoClean);
 }
 
 void FSMEditor::displaySetCode(const QString& code)
@@ -174,12 +207,21 @@ bool FSMEditor::save(const QString& fileName)
   QTextStream out(&file);
 
   settings_.getWriter().write(scene_.graph(), out);
+  undoStack_.setClean();
   return true;
 }
 
 void FSMEditor::setCurrentFile(QString fileName)
 {
-  lastDir_ = QFileInfo(fileName).absolutePath();
+  if (fileName.isEmpty())
+  {
+    setWindowTitle(tr("FSM Editor[*]"));
+  }
+  else
+  {
+    lastDir_ = QFileInfo(fileName).absolutePath();
+    setWindowTitle(tr("FSM Editor - %1[*]").arg(fileName));
+  }
   currentFile_ = fileName;
 }
 
@@ -193,14 +235,18 @@ bool FSMEditor::open()
 
 bool FSMEditor::open(const QString& fileName)
 {
-  setCurrentFile(fileName);
-  QFile file(fileName);
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return false;
+  if (maybeSave())
+  {
+    setCurrentFile(fileName);
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+      return false;
 
-  QTextStream in(&file);
+    QTextStream in(&file);
 
-  scene_.setNewGraph(settings_.getReader().read(in));
-  undoStack_.clear();
-  return true;
+    scene_.setNewGraph(settings_.getReader().read(in));
+    undoStack_.clear();
+    return true;
+  }
+  return false;
 }
