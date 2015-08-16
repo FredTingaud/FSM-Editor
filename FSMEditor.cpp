@@ -235,9 +235,11 @@ QList<QAction*> FSMEditor::createUndoRedoActions()
 {
   QList<QAction*> result;
   QAction* undo = undoStack_.createUndoAction(this);
+  undo->setIcon(QIcon(":/ic_undo.png"));
   undo->setShortcut(QKeySequence::Undo);
   QAction* redo = undoStack_.createRedoAction(this);
   redo->setShortcut(QKeySequence::Redo);
+  redo->setIcon(QIcon(":/ic_redo.png"));
 
   result << undo << redo;
   return result;
