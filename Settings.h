@@ -48,6 +48,12 @@ public:
   virtual QString validateStateName(const QString& name);
 
   /**
+   * @return whether the top level menu is visible.
+   * It could make sense to hide it when the editor is embedded.
+   */
+  virtual bool showMenu();
+
+  /**
    * @return Whether the "New", "Open" and "Save" actions are accessible.
    * When the editor is embedded, it can be convenient to hide them and drive
    * open/save at a higher level.

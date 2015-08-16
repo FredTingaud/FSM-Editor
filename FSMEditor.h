@@ -7,7 +7,7 @@
  * editor, depending on the use-case.
  */
 
-#include <QSplitter>
+#include <QMainWindow>
 
 #include <fsm-editor/FSMScene.h>
 
@@ -18,12 +18,21 @@ class QToolBar;
 class QUndoCommand;
 class QPlainTextEdit;
 class Settings;
-class FSMEditor : public QSplitter
+class QMenuBar;
+class QMenu;
+class QSplitter;
+class FSMEditor : public QMainWindow
 {
   Q_OBJECT;
 public:
   FSMEditor(Settings& settings);
   virtual ~FSMEditor();
+
+  /**
+   * Set whether the top level menu is visible.
+   * This parameter is initially set from Settings object, but can be overridden here.
+   */
+  void setMenuVisible(bool visible);
 
   /**
    * Zoom in, in the graph view.
@@ -86,7 +95,15 @@ private:
   QWidget* makeViewPanel();
   void makeLuaEditor();
 
-  void createSceneActions(QToolBar* toolbar);
+  void fillAllMenus(QToolBar* toolbar);
+
+  void completeFileMenu(QMenu* fileMenu);
+
+  void fillMenu(QToolBar* toolbar, QMenu* menu, QList<QAction*> actions);
+  QList<QAction*> createElementActions();
+  QList<QAction*> createUndoRedoActions();
+  QList<QAction*> createZoomActions();
+  QList<QAction*> createFileActions();
 
   void loadSettings();
   void saveSettings();
@@ -100,16 +117,19 @@ private:
   static const QString LAST_DIR_KEY;
   static const QString LAST_ZOOM;
   static const QString LAST_SPLITS;
+  static const QString LAST_STATE;
   static const QString LAST_GEOMETRY;
 
 private:
   Settings& settings_;
   FSMScene scene_;
   QGraphicsView fsmView_;
+  QSplitter* splitter_;
 
   QUndoStack undoStack_;
   QPlainTextEdit* editor_;
   QString lastDir_;
   QString currentFile_;
   QAction* saveAction_;
+  QMenuBar* menu_;
 };

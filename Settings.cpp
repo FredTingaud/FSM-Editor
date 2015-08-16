@@ -36,6 +36,11 @@ QString Settings::validateStateName(const QString& name)
   return "";
 }
 
+bool Settings::showMenu()
+{
+  return true;
+}
+
 bool Settings::showFileActions()
 {
   return true;
