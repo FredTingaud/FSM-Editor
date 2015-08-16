@@ -99,11 +99,11 @@ private:
 
   void completeFileMenu(QMenu* fileMenu);
 
-  void fillMenu(QToolBar* toolbar, QMenu* menu, QList<QAction*> actions);
-  QList<QAction*> createElementActions();
-  QList<QAction*> createUndoRedoActions();
-  QList<QAction*> createZoomActions();
-  QList<QAction*> createFileActions();
+  void fillMenu(QToolBar* toolbar, QMenu* menu, const QList<std::tuple<QAction*, bool>>& actions);
+  QList<std::tuple<QAction*, bool>> createElementActions();
+  QList<std::tuple<QAction*, bool>> createUndoRedoActions();
+  QList<std::tuple<QAction*, bool>> createZoomActions();
+  QList<std::tuple<QAction*, bool>> createFileActions();
 
   void loadSettings();
   void saveSettings();

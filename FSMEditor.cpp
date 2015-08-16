@@ -203,37 +203,40 @@ void FSMEditor::completeFileMenu(QMenu* fileMenu)
   fileMenu->addAction(closeAction);
 }
 
-void FSMEditor::fillMenu(QToolBar* toolbar, QMenu* menu, QList<QAction*> actions)
+void FSMEditor::fillMenu(QToolBar* toolbar, QMenu* menu, const QList<std::tuple<QAction*, bool>>& actions)
 {
-  for (QAction* action : actions)
+  for (auto action : actions)
   {
-    menu->addAction(action);
-    toolbar->addAction(action);
+    menu->addAction(std::get<0>(action));
+    if (std::get<1>(action))
+    {
+      toolbar->addAction(std::get<0>(action));
+    }
   }
 }
 
-QList<QAction*> FSMEditor::createZoomActions()
+QList<std::tuple<QAction*, bool>> FSMEditor::createZoomActions()
 {
-  QList<QAction*> result;
+  QList<std::tuple<QAction*, bool>> result;
   QAction* zoomIn = new QAction(QIcon(":/ic_zoom_in.png"), tr("Zoom &In"), this);
   QAction* zoomOut = new QAction(QIcon(":/ic_zoom_out.png"), tr("Zoom &Out"), this);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
 
-  result << zoomIn << zoomOut;
+  result << std::make_tuple(zoomIn, true) << std::make_tuple(zoomOut, true);
   return result;
 }
 
-QList<QAction*> FSMEditor::createElementActions()
+QList<std::tuple<QAction*, bool>> FSMEditor::createElementActions()
 {
-  QList<QAction*> result;
-  result << scene_.getStartAction();
+  QList<std::tuple<QAction*, bool>> result;
+  result << std::make_tuple(scene_.getStartAction(), true);
   return result;
 }
 
-QList<QAction*> FSMEditor::createUndoRedoActions()
+QList<std::tuple<QAction*, bool>> FSMEditor::createUndoRedoActions()
 {
-  QList<QAction*> result;
+  QList<std::tuple<QAction*, bool>> result;
   QAction* undo = undoStack_.createUndoAction(this);
   undo->setIcon(QIcon(":/ic_undo.png"));
   undo->setShortcut(QKeySequence::Undo);
@@ -241,20 +244,20 @@ QList<QAction*> FSMEditor::createUndoRedoActions()
   redo->setShortcut(QKeySequence::Redo);
   redo->setIcon(QIcon(":/ic_redo.png"));
 
-  result << undo << redo;
+  result << std::make_tuple(undo, true) << std::make_tuple(redo, true);
   return result;
 }
 
-QList<QAction*> FSMEditor::createFileActions()
+QList<std::tuple<QAction*, bool>> FSMEditor::createFileActions()
 {
-  QList<QAction*> result;
-  QAction* newAction = new QAction(tr("New"), this);
+  QList<std::tuple<QAction*, bool>> result;
+  QAction* newAction = new QAction(QIcon(":/ic_insert_drive_file.png"), tr("New"), this);
   newAction->setShortcut(QKeySequence::New);
-  saveAction_ = new QAction(tr("Save"), this);
+  saveAction_ = new QAction(QIcon(":/ic_save.png"), tr("Save"), this);
   saveAction_->setShortcut(QKeySequence::Save);
   QAction* saveAsAction = new QAction("Save &as...", this);
   saveAsAction->setShortcut(QKeySequence::SaveAs);
-  QAction* openAction = new QAction(tr("Open"), this);
+  QAction* openAction = new QAction(QIcon(":/ic_folder_open.png"), tr("Open"), this);
   openAction->setShortcut(QKeySequence::Open);
 
   connect(newAction, SIGNAL(triggered()), SLOT(newGraph()));
@@ -262,7 +265,10 @@ QList<QAction*> FSMEditor::createFileActions()
   connect(saveAsAction, SIGNAL(triggered()), SLOT(saveAs()));
   connect(openAction, SIGNAL(triggered()), SLOT(open()));
 
-  result << newAction << saveAction_ << saveAsAction << openAction;
+  result << std::make_tuple(newAction, true)
+    << std::make_tuple(saveAction_, true)
+    << std::make_tuple(saveAsAction, false)
+    << std::make_tuple(openAction, true);
   return result;
 }
 
