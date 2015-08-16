@@ -24,7 +24,7 @@ set(CMAKE_AUTOMOC ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-QT5_ADD_RESOURCES(RESOURCES resources/resources.qrc)
+QT5_ADD_RESOURCES(RESOURCES resources/fsm_editor_resources.qrc)
 
 set(allSRCS
     ExportVisitor.h

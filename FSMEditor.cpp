@@ -27,7 +27,7 @@ FSMEditor::FSMEditor(Settings& settings)
   , fsmView_(&scene_, this)
   , saveAction_(nullptr)
 {
-  Q_INIT_RESOURCE(resources);
+  Q_INIT_RESOURCE(fsm_editor_resources);
   makeLuaEditor();
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());
@@ -45,7 +45,7 @@ FSMEditor::FSMEditor(Settings& settings)
 FSMEditor::~FSMEditor()
 {
   saveSettings();
-  Q_CLEANUP_RESOURCE(resources);
+  Q_CLEANUP_RESOURCE(fsm_editor_resources);
 }
 
 void FSMEditor::closeEvent(QCloseEvent *event)
