@@ -245,7 +245,9 @@ QList<std::tuple<QAction*, bool>> FSMEditor::createZoomActions()
 {
   QList<std::tuple<QAction*, bool>> result;
   QAction* zoomIn = new QAction(QIcon(":/ic_zoom_in.png"), tr("Zoom &In"), this);
+  zoomIn->setShortcut(QKeySequence::ZoomIn);
   QAction* zoomOut = new QAction(QIcon(":/ic_zoom_out.png"), tr("Zoom &Out"), this);
+  zoomOut->setShortcut(QKeySequence::ZoomOut);
   connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
 
