@@ -19,6 +19,8 @@ class QAction;
 class FSMScene : public QGraphicsScene
 {
   Q_OBJECT;
+
+  using super = QGraphicsScene;
 public:
   FSMScene(std::function<QString(const QString&)> stateValidator);
 
@@ -44,6 +46,14 @@ public:
    * Signal emitted when the current code is hidden.
    */
   Q_SIGNAL void codeHidden();
+  /**
+   * Signal emitted when switching to scroll mode.
+   */
+  Q_SIGNAL void switchScrollMode(bool on);
+  /**
+  * Signal emitted when zooming in/out.
+  */
+  Q_SIGNAL void zoomed(int delta);
 
   /**
    * Get a state by its name.
@@ -122,6 +132,13 @@ public:
     UNDO_CODE = 2
   };
 
+protected:
+  virtual void wheelEvent(QGraphicsSceneWheelEvent *event) override;
+
+  virtual void keyPressEvent(QKeyEvent *event) override;
+
+  virtual void keyReleaseEvent(QKeyEvent *event) override;
+
 private:
   friend class AddStateCommand;
   friend class DeleteStateCommand;
@@ -173,4 +190,5 @@ private:
   FSMElement* editingElement_;
   std::function<QString(const QString&)> stateValidator_;
   QAction* startAct_;
+  QPointF pressPos_;
 };

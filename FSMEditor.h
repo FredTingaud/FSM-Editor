@@ -88,6 +88,8 @@ private:
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
   Q_SLOT void modifiedChanged(bool undoClean);
+  Q_SLOT void scrollModeSwitched(bool scroll);
+  Q_SLOT void zoomView(int delta);
 
   void setCurrentFile(QString fileName);
 

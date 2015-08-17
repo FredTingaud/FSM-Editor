@@ -7,9 +7,11 @@
 #include <fsm-editor/undo/StartStateCommand.h>
 #include <fsm-editor/undo/UpdateCode.h>
 
-#include<QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 #include <QUndoCommand>
 #include <QAction>
+#include <QGraphicsView>
+#include <QKeyEvent>
 
 int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
@@ -186,6 +188,36 @@ void FSMScene::clearAll()
   clear();
   startingState_ = nullptr;
   startAct_->setEnabled(false);
+}
+
+void FSMScene::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+  if (event->modifiers() & Qt::ControlModifier)
+  {
+    Q_EMIT zoomed(event->delta());
+  }
+  else
+  {
+    super::wheelEvent(event);
+  }
+}
+
+void FSMScene::keyPressEvent(QKeyEvent *event)
+{
+  super::keyPressEvent(event);
+  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
+  {
+    Q_EMIT switchScrollMode(true);
+  }
+}
+
+void FSMScene::keyReleaseEvent(QKeyEvent *event)
+{
+  super::keyReleaseEvent(event);
+  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
+  {
+    Q_EMIT switchScrollMode(false);
+  }
 }
 
 void FSMScene::setNewGraph(Graph&& graph)

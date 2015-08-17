@@ -112,6 +112,8 @@ void FSMEditor::makeLuaEditor()
   connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
+  connect(&scene_, SIGNAL(switchScrollMode(bool)), SLOT(scrollModeSwitched(bool)));
+  connect(&scene_, SIGNAL(zoomed(int)), SLOT(zoomView(int)));
 }
 
 void FSMEditor::saveSettings()
@@ -147,6 +149,30 @@ void FSMEditor::modifiedChanged(bool undoClean)
   if (saveAction_)
   {
     saveAction_->setEnabled(!undoClean);
+  }
+}
+
+void FSMEditor::scrollModeSwitched(bool scroll)
+{
+  if (scroll)
+  {
+    fsmView_.setDragMode(QGraphicsView::ScrollHandDrag);
+  }
+  else
+  {
+    fsmView_.setDragMode(QGraphicsView::NoDrag);
+  }
+}
+
+void FSMEditor::zoomView(int delta)
+{
+  if (delta > 0)
+  {
+    zoomIn();
+  }
+  else
+  {
+    zoomOut();
   }
 }
 
