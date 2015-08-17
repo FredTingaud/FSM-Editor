@@ -216,7 +216,7 @@ QList<std::tuple<QAction*, bool>> FSMEditor::createZoomActions()
   connect(zoomIn, SIGNAL(triggered()), &fsmView_, SLOT(zoomIn()));
   connect(zoomOut, SIGNAL(triggered()), &fsmView_, SLOT(zoomOut()));
 
-  result << std::make_tuple(zoomIn, true) << std::make_tuple(zoomOut, true);
+  result << std::make_tuple(zoomOut, true) << std::make_tuple(zoomIn, true);
   return result;
 }
 
