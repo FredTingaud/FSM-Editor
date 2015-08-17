@@ -19,8 +19,33 @@ if (UNIX)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 endif (UNIX)
 
-set(CMAKE_AUTOMOC ON)
+option(BUILD_DOC "Build Doxygen documentation" false)
+if (BUILD_DOC)
+  find_package(Doxygen)
 
+  SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in     )
+  SET( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
+  SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
+  SET( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 )
+  SET( doxy_input           ${PROJECT_SOURCE_DIR}                       )
+  SET( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    )
+
+  CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
+
+  ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
+                      COMMAND ${CMAKE_COMMAND} -E echo_append "Building Documentation..."
+                      COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+                      COMMAND ${CMAKE_COMMAND} -E echo_append "Documentation build done..."
+                      MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
+                      DEPENDS FSM-lib ${doxy_extra_files}
+                      COMMENT "Generating HTML documentation")
+
+  ADD_CUSTOM_TARGET( doc ALL DEPENDS ${doxy_html_index_file} )
+
+  INSTALL( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc )
+endif (BUILD_DOC)
+
+set(CMAKE_AUTOMOC ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
