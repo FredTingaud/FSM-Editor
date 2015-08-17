@@ -1,17 +1,18 @@
 #pragma once
 
-/**
- * Common parent to both States and Transitions.
- * View equivalent to GraphElement.
- *
- * @see GraphElement.
- */
 #include <fsm-editor/model/GraphElement.h>
 
 #include <QString>
 
 class ExportVisitor;
 
+/**
+ * @brief Common parent to both States and Transitions.
+ *
+ * View equivalent to GraphElement.
+ *
+ * @see GraphElement.
+ */
 class FSMElement : public GraphElement
 {
 public:

@@ -1,13 +1,13 @@
 #pragma once
 
-/**
- * Minimalistic implementation of the GraphState.
- */
 #include <fsm-editor/model/GraphState.h>
 
 #include <QString>
 #include <QPointF>
 
+/**
+ * @brief Minimalistic implementation of the GraphState.
+ */
 class GraphStateImpl : public GraphState
 {
 public:

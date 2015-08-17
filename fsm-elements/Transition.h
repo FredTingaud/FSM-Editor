@@ -1,9 +1,5 @@
 #pragma once
 
-/**
- * View representation of a transition between two states of a Finite State Machine.
- * @see GraphTransition
- */
 #include <fsm-editor/fsm-elements/FSMElement.h>
 #include <fsm-editor/model/GraphTransition.h>
 
@@ -11,6 +7,15 @@
 
 class State;
 class FSMScene;
+
+/**
+ * @brief View representation of a transition between two states of a Finite State Machine.
+ *
+ * Each transition has associated code that describes on what condition the Machine passes from one state to the other.
+ * It's equivalent on model side is GraphTransition.
+ *
+ * @see GraphTransition
+ */
 class Transition : public QGraphicsItem, public FSMElement, public GraphTransition
 {
   using super = QGraphicsItem;

@@ -6,6 +6,12 @@
 
 class QTextStream;
 
+/**
+ * @brief Generates a graph from a saved file.
+ *
+ * It is the counterpart of FSMWriter.
+ * @see FSMWriter.
+ */
 class FSMReader
 {
 public:

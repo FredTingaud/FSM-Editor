@@ -3,6 +3,12 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
+/**
+ * @brief A view on the FSMScene.
+ *
+ * Each scene can have multiple scenes. This class provides the main view
+ * and handles camera move and zoom.
+ */
 class FSMView : public QGraphicsView
 {
   Q_OBJECT;

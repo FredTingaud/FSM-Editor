@@ -1,10 +1,10 @@
 #pragma once
 
-/**
- * Minimalistic implementation of the GraphTransition.
- */
 #include <fsm-editor/model/GraphTransition.h>
 
+/**
+ * @brief Minimalistic implementation of the GraphTransition.
+ */
 class GraphTransitionImpl : public GraphTransition
 {
 public:

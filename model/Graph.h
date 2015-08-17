@@ -1,13 +1,15 @@
 #pragma once
 
-/**
- * Model class holding the GraphElements.
- */
 #include <QList>
 
 class GraphState;
 class GraphTransition;
 
+/**
+ * @brief Model class describing the Finite State Machine.
+ *
+ * This class holds the GraphElements and is used to describe the FSM, for code generation and graph loading.
+ */
 class Graph
 {
 public:

@@ -1,9 +1,5 @@
 #pragma once
 
-/**
- * View representation of a State of the Finite State Machine.
- * @see GraphState
- */
 #include <fsm-editor/fsm-elements/FSMElement.h>
 #include <fsm-editor/model/GraphState.h>
 #include <QGraphicsRectItem>
@@ -16,6 +12,14 @@
 
 class FSMScene;
 
+/**
+ * @brief View representation of a State of the Finite State Machine.
+ *
+ * Each state has associated code describing the behavior it represents.
+ * It's equivalent on model side is GraphState.
+ *
+ * @see GraphState
+ */
 class State : public QGraphicsRectItem, public FSMElement, public GraphState
 {
   using super = QGraphicsRectItem;

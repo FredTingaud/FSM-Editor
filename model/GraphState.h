@@ -1,14 +1,19 @@
 #pragma once
 
-/**
- * Model representation of a State of the Finite State Machine.
- */
 #include <fsm-editor/model/GraphElement.h>
 
 #include <QPointF>
 
 class ExportVisitor;
 
+/**
+ * @brief Model representation of a State of the Finite State Machine.
+ *
+ * Each state has associated code describing the behavior it represents.
+ * It's equivalent on view side is State.
+ *
+ * @see State
+ */
 class GraphState : public GraphElement
 {
 public:

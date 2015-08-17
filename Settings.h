@@ -1,12 +1,17 @@
 #pragma once
-/**
- * Settings should be overridden, to customize the editor for each specific use-case.
- */
 #include <QString>
 
 class FSMReader;
 class FSMWriter;
 class QTextDocument;
+
+/**
+ * @brief Override to customize the editor.
+ *
+ * This class passes the code generator and other parameters that make sense for
+ * developer embedding the editor.
+ * Default values are provided everywhere it makes sense.
+ */
 class Settings
 {
 public:

@@ -1,10 +1,10 @@
 #pragma once
 
-/**
- * Model representation shared between states and transitions.
- */
 #include <QString>
 
+/**
+ * @brief Model representation shared between states and transitions.
+ */
 class GraphElement
 {
 public:

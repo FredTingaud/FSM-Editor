@@ -1,12 +1,5 @@
 #pragma once
 
-/**
- * Main class of the FSM Editor project.
- * Include this QWidget in your application to use it.
- * The FSMEditor takes a Settings object in its constructor, that allows to customize the
- * editor, depending on the use-case.
- */
-
 #include <QMainWindow>
 
 #include <fsm-editor/FSMScene.h>
@@ -21,6 +14,14 @@ class Settings;
 class QMenuBar;
 class QMenu;
 class QSplitter;
+
+/**
+ * @brief Main class of the FSM Editor project.
+ *
+ * Include this QWidget in your application to use it.
+ * The FSMEditor takes a Settings object in its constructor, that allows to customize the
+ * editor, depending on the use-case.
+ */
 class FSMEditor : public QMainWindow
 {
   Q_OBJECT;

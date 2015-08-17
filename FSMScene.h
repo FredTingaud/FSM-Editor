@@ -1,9 +1,5 @@
 #pragma once
 
-/**
- * FSMScene displays the graph. It manipulates both the graphical components and the model.
- * It is bad architecture, but it is the standard one in Qt.
- */
 #include <QGraphicsScene>
 #include <fsm-editor/model/Graph.h>
 
@@ -16,6 +12,12 @@ class FSMElement;
 class ExportVisitor;
 class QAction;
 
+/**
+ * @brief FSMScene displays the graph.
+ *
+ * It manipulates both the graphical components and the model.
+ * It is bad architecture, but it is the standard one in Qt.
+ */
 class FSMScene : public QGraphicsScene
 {
   Q_OBJECT;

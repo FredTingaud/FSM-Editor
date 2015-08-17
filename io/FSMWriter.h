@@ -3,6 +3,12 @@
 class Graph;
 class QTextStream;
 
+/**
+ * @brief Generates code from the edited graph.
+ *
+ * It is the counterpart of FSMReader.
+ * @see FSMReader.
+ */
 class FSMWriter
 {
 public:

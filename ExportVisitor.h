@@ -1,14 +1,15 @@
 #pragma once
-
-/**
- * Utility class, to simplify writers creation.
- * ExportVisitor can visit both states and transitions.
- */
 #include <QString>
 
 class GraphState;
 class GraphTransition;
 
+/**
+ * @brief Utility class, to simplify code generation.
+ *
+ * ExportVisitor can visit both states and transitions.
+ * Override it to use Visitor pattern in your code generation.
+ */
 class ExportVisitor
 {
 public:
