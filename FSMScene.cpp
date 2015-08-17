@@ -202,24 +202,6 @@ void FSMScene::wheelEvent(QGraphicsSceneWheelEvent *event)
   }
 }
 
-void FSMScene::keyPressEvent(QKeyEvent *event)
-{
-  super::keyPressEvent(event);
-  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
-  {
-    Q_EMIT switchScrollMode(true);
-  }
-}
-
-void FSMScene::keyReleaseEvent(QKeyEvent *event)
-{
-  super::keyReleaseEvent(event);
-  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
-  {
-    Q_EMIT switchScrollMode(false);
-  }
-}
-
 void FSMScene::setNewGraph(Graph&& graph)
 {
   clearAll();

@@ -78,16 +78,6 @@ void FSMEditor::setMenuVisible(bool visible)
   menuBar()->setVisible(visible);
 }
 
-void FSMEditor::zoomIn()
-{
-  fsmView_.scale(1.2, 1.2);
-}
-
-void FSMEditor::zoomOut()
-{
-  fsmView_.scale(0.8, 0.8);
-}
-
 bool FSMEditor::newGraph()
 {
   if (maybeSave())
@@ -112,15 +102,14 @@ void FSMEditor::makeLuaEditor()
   connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
-  connect(&scene_, SIGNAL(switchScrollMode(bool)), SLOT(scrollModeSwitched(bool)));
-  connect(&scene_, SIGNAL(zoomed(int)), SLOT(zoomView(int)));
+  connect(&scene_, SIGNAL(zoomed(int)), &fsmView_, SLOT(zoomView(int)));
 }
 
 void FSMEditor::saveSettings()
 {
   QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
   settings.setValue(LAST_DIR_KEY, lastDir_);
-  settings.setValue(LAST_ZOOM, fsmView_.transform().m11());
+  settings.setValue(LAST_ZOOM, fsmView_.currentZoom());
   settings.setValue(LAST_GEOMETRY, saveGeometry());
   settings.setValue(LAST_STATE, saveState());
   settings.setValue(LAST_SPLITS, splitter_->saveState());
@@ -131,7 +120,7 @@ void FSMEditor::loadSettings()
   QSettings settings(settings_.getOrganizationName(), settings_.getApplicationName());
   lastDir_ = settings.value(LAST_DIR_KEY, "").toString();
   qreal scale = settings.value(LAST_ZOOM, 1.).toDouble();
-  fsmView_.scale(scale, scale);
+  fsmView_.setZoom(scale);
   restoreGeometry(settings.value(LAST_GEOMETRY).toByteArray());
   restoreState(settings.value(LAST_STATE).toByteArray());
   splitter_->restoreState(settings.value(LAST_SPLITS).toByteArray());
@@ -149,30 +138,6 @@ void FSMEditor::modifiedChanged(bool undoClean)
   if (saveAction_)
   {
     saveAction_->setEnabled(!undoClean);
-  }
-}
-
-void FSMEditor::scrollModeSwitched(bool scroll)
-{
-  if (scroll)
-  {
-    fsmView_.setDragMode(QGraphicsView::ScrollHandDrag);
-  }
-  else
-  {
-    fsmView_.setDragMode(QGraphicsView::NoDrag);
-  }
-}
-
-void FSMEditor::zoomView(int delta)
-{
-  if (delta > 0)
-  {
-    zoomIn();
-  }
-  else
-  {
-    zoomOut();
   }
 }
 
@@ -248,8 +213,8 @@ QList<std::tuple<QAction*, bool>> FSMEditor::createZoomActions()
   zoomIn->setShortcut(QKeySequence::ZoomIn);
   QAction* zoomOut = new QAction(QIcon(":/ic_zoom_out.png"), tr("Zoom &Out"), this);
   zoomOut->setShortcut(QKeySequence::ZoomOut);
-  connect(zoomIn, SIGNAL(triggered()), SLOT(zoomIn()));
-  connect(zoomOut, SIGNAL(triggered()), SLOT(zoomOut()));
+  connect(zoomIn, SIGNAL(triggered()), &fsmView_, SLOT(zoomIn()));
+  connect(zoomOut, SIGNAL(triggered()), &fsmView_, SLOT(zoomOut()));
 
   result << std::make_tuple(zoomIn, true) << std::make_tuple(zoomOut, true);
   return result;

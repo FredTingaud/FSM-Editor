@@ -135,10 +135,6 @@ public:
 protected:
   virtual void wheelEvent(QGraphicsSceneWheelEvent *event) override;
 
-  virtual void keyPressEvent(QKeyEvent *event) override;
-
-  virtual void keyReleaseEvent(QKeyEvent *event) override;
-
 private:
   friend class AddStateCommand;
   friend class DeleteStateCommand;

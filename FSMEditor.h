@@ -10,8 +10,8 @@
 #include <QMainWindow>
 
 #include <fsm-editor/FSMScene.h>
+#include <fsm-editor/FSMView.h>
 
-#include <QGraphicsView>
 #include <QUndoStack>
 
 class QToolBar;
@@ -33,15 +33,6 @@ public:
    * This parameter is initially set from Settings object, but can be overridden here.
    */
   void setMenuVisible(bool visible);
-
-  /**
-   * Zoom in, in the graph view.
-   */
-  Q_SLOT void zoomIn();
-  /**
-  * Zoom out, in the graph view.
-  */
-  Q_SLOT void zoomOut();
 
   /**
    * Open a new empty graph.
@@ -88,8 +79,6 @@ private:
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
   Q_SLOT void modifiedChanged(bool undoClean);
-  Q_SLOT void scrollModeSwitched(bool scroll);
-  Q_SLOT void zoomView(int delta);
 
   void setCurrentFile(QString fileName);
 
@@ -125,7 +114,7 @@ private:
 private:
   Settings& settings_;
   FSMScene scene_;
-  QGraphicsView fsmView_;
+  FSMView fsmView_;
   QSplitter* splitter_;
 
   QUndoStack undoStack_;

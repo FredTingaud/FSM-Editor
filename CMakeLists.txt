@@ -32,6 +32,8 @@ set(allSRCS
     FSMEditor.h
     FSMScene.cpp
     FSMScene.h
+    FSMView.cpp
+    FSMView.h
     Settings.cpp
     Settings.h
     fsm-elements/FSMElement.cpp
