@@ -20,7 +20,7 @@ FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
   : editingElement_(nullptr)
   , stateValidator_(stateValidator)
   , startingState_(nullptr)
-  , startAct_(new QAction(QIcon(":/ic_home.png"), tr("Start"), this))
+  , startAct_(new QAction(QIcon(State::START_ICON), tr("Start"), this))
 {
   startAct_->setEnabled(false);
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));

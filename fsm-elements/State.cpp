@@ -17,6 +17,7 @@ const qreal State::H_MARGIN = 4;
 const qreal State::V_MARGIN = 4;
 const QColor State::PEN_COLOR = QColor(190, 190, 190);
 const QColor State::START_PEN_COLOR = QColor(180, 235, 100);
+const QString State::START_ICON = ":/ic_flag.png";
 
 State::State(const QString& title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
@@ -30,6 +31,7 @@ State::State(const QString& title, const QPointF& position, std::function<void(Q
   setPos(position);
   setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemSendsGeometryChanges);
   setAcceptHoverEvents(true);
+  originalRect_ = rect();
 }
 
 State::~State()
@@ -49,14 +51,21 @@ void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
   super::paint(painter, option, widget);
 
   shrinkTextToFit(painter);
-  painter->drawText(rect(), Qt::AlignCenter, title_);
+  painter->drawText(originalRect_, Qt::AlignCenter, title_);
+  if (start_)
+  {
+    QRectF right(WIDTH, 0, HEIGHT, HEIGHT);
+    painter->fillRect(right, pen().color());
+    QPixmap flag = QPixmap(START_ICON);
+    painter->drawPixmap(right, flag, QRectF(0, 0, flag.width(), flag.height()));
+  }
 }
 
 void State::shrinkTextToFit(QPainter * painter)
 {
   QFontMetrics metrics = painter->fontMetrics();
   QFont font = painter->font();
-  while (!fitInRect(rect(), metrics.boundingRect(title_)) && font.pointSize() > 3)
+  while (!fitInRect(originalRect_, metrics.boundingRect(title_)) && font.pointSize() > 3)
   {
     font.setPointSize(font.pointSize() - 1);
     painter->setFont(font);
@@ -275,11 +284,11 @@ void State::setStart(bool start)
 {
   if (start)
   {
-    setPen(START_PEN_COLOR);
+    setRect(0, 0, WIDTH + HEIGHT, HEIGHT);
   }
   else
   {
-    setPen(PEN_COLOR);
+    setRect(originalRect_);
   }
   start_ = start;
   update();

@@ -135,6 +135,9 @@ private:
    */
   FSMScene* scene() const;
 
+public:
+  static const QString START_ICON;
+
 private:
   static const qreal WIDTH;
   static const qreal HEIGHT;
@@ -151,4 +154,5 @@ private:
   QList<Transition*> transitions_;
   QList<Transition*> pointingTransitions_;
   bool start_;
+  QRectF originalRect_;
 };
