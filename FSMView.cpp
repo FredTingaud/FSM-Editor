@@ -4,7 +4,9 @@
 
 FSMView::FSMView(QGraphicsScene* scene, QWidget* parent)
   : super(scene, parent)
-{}
+{
+  setDragMode(QGraphicsView::RubberBandDrag);
+}
 
 void FSMView::keyPressEvent(QKeyEvent *event)
 {
@@ -20,7 +22,7 @@ void FSMView::keyReleaseEvent(QKeyEvent *event)
   super::keyReleaseEvent(event);
   if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
   {
-    setDragMode(QGraphicsView::NoDrag);
+    setDragMode(QGraphicsView::RubberBandDrag);
   }
 }
 
