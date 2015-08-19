@@ -87,6 +87,10 @@ void FSMScene::removeState(const QString& name)
   states_.erase(states_.find(name));
   removeItem(item);
   delete item;
+  if (item == startingState_)
+  {
+    startingState_ = nullptr;
+  }
 }
 
 State* FSMScene::getState(const QString& name) const
@@ -163,7 +167,10 @@ void FSMScene::changeStartState(State* start)
     startingState_->setStart(false);
   }
   startingState_ = start;
+  if (startingState_)
+  {
   startingState_->setStart(true);
+}
 }
 
 Graph FSMScene::graph() const
