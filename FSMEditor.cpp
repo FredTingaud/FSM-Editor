@@ -240,7 +240,7 @@ QList<std::tuple<QAction*, bool>> FSMEditor::createZoomActions()
 QList<std::tuple<QAction*, bool>> FSMEditor::createElementActions()
 {
   QList<std::tuple<QAction*, bool>> result;
-  result << std::make_tuple(scene_.getStartAction(), true);
+  result << std::make_tuple(scene_.getStartAction(), true) << std::make_tuple(scene_.getDeleteAction(), true);
   return result;
 }
 

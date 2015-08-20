@@ -31,11 +31,15 @@ FSMScene::FSMScene()
   : editingElement_(nullptr)
   , startingState_(nullptr)
   , startAct_(new QAction(QIcon(State::START_ICON), tr("Start"), this))
+  , deleteAct_(new QAction(QIcon(":/ic_delete.png"), tr("Delete"), this))
 {
   startAct_->setEnabled(false);
+  deleteAct_->setShortcut(QKeySequence::Delete);
+  deleteAct_->setEnabled(false);
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
   connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
   connect(startAct_, SIGNAL(triggered()), SLOT(setSelectionAsStartState()));
+  connect(deleteAct_, SIGNAL(triggered()), SLOT(deleteSelection()));
 }
 
 void FSMScene::setNameValidator(std::function<QString(const QString&)> stateValidator)
@@ -72,12 +76,14 @@ void FSMScene::checkSelection()
   {
     editingElement_ = nullptr;
     startAct_->setEnabled(false);
+    deleteAct_->setEnabled(false);
     Q_EMIT codeHidden();
   }
   else
   {
     State* state = dynamic_cast<State*>(selectedItems().at(0));
     startAct_->setEnabled(state != nullptr);
+    deleteAct_->setEnabled(true);
   }
 }
 
@@ -463,6 +469,11 @@ void FSMScene::setSelectionAsStartState()
 QAction* FSMScene::getStartAction() const
 {
   return startAct_;
+}
+
+QAction* FSMScene::getDeleteAction() const
+{
+  return deleteAct_;
 }
 
 void FSMScene::setStateName(State* state, const QString& name)

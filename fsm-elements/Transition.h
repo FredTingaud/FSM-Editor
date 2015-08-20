@@ -71,8 +71,6 @@ public:
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
-  virtual void keyPressEvent(QKeyEvent *event) override;
-
   virtual QString getCode() const override;
   virtual void setCode(const QString& code) override;
   virtual QString name() const override;

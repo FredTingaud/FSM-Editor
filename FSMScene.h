@@ -133,6 +133,11 @@ public:
   QAction* getStartAction() const;
 
   /**
+   * @return An action deleting the selection.
+   */
+  QAction* getDeleteAction() const;
+
+  /**
    * Classes outside the QGraphicsScene should handle model objects,
    * not directly the graphics item. We want to be able to change the
    * architecture in the future.
@@ -274,5 +279,6 @@ private:
   State* startingState_;
   FSMElement* editingElement_;
   QAction* startAct_;
+  QAction* deleteAct_;
   QPointF pressPos_;
 };

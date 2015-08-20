@@ -118,12 +118,7 @@ QString State::name() const
 
 void State::keyPressEvent(QKeyEvent *event)
 {
-  if (event->key() == Qt::Key_Delete)
-  {
-    pushStack_(new DeleteStateCommand(scene(), this));
-    event->accept();
-  }
-  else if (event->key() == Qt::Key_F2)
+  if (event->key() == Qt::Key_F2)
   {
     askRename();
   }

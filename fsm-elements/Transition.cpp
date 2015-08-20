@@ -307,19 +307,6 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   super::mouseReleaseEvent(event);
 }
 
-void Transition::keyPressEvent(QKeyEvent *event)
-{
-  if (hasDestination() && event->key() == Qt::Key_Delete)
-  {
-    origin_->pushCommand(new DeleteTransition(fsmScene(), origin_->name(), destination_->name()));
-    event->accept();
-  }
-  else
-  {
-    super::keyPressEvent(event);
-  }
-}
-
 void Transition::setCode(const QString& code)
 {
   FSMElement::setCode(code);
