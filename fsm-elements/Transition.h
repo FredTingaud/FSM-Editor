@@ -80,6 +80,11 @@ public:
   virtual QString visit(ExportVisitor& visitor) const override;
 
   virtual QPainterPath shape() const override;
+
+  virtual QString getOriginState() const override;
+
+  virtual QString getDestinationState() const override;
+
 private:
   void initialize();
 
@@ -101,10 +106,6 @@ private:
   virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
   FSMScene* fsmScene() const;
-
-  virtual QString getOriginState() const override;
-
-  virtual QString getDestinationState() const override;
 
 private:
   static const qreal LINK_SIZE;

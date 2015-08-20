@@ -2,6 +2,8 @@
 
 #include <fsm-editor/model/GraphState.h>
 
+#include <fsm-editor/ExportVisitor.h>
+
 #include <QString>
 #include <QPointF>
 
@@ -18,7 +20,7 @@ public:
 
   virtual QString visit(ExportVisitor& visitor) const override
   {
-    throw std::exception("The method or operation is not implemented.");
+    return visitor.exportElement(*this);
   }
 
   void setPosition(const QPointF pos)

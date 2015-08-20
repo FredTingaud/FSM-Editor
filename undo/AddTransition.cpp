@@ -8,6 +8,15 @@ AddTransition::AddTransition(FSMScene* scene, const QString& origin, const QStri
   , scene_(scene)
   , origin_(origin)
   , destination_(destination)
+  , code_("")
+{}
+
+AddTransition::AddTransition(FSMScene* scene, const QString& origin, const QString& destination, const QString& code)
+  : QUndoCommand(QObject::tr("create transition from %1 to %2", "Append to Undo").arg(origin).arg(destination))
+  , scene_(scene)
+  , origin_(origin)
+  , destination_(destination)
+  , code_(code)
 {}
 
 void AddTransition::undo()
@@ -21,5 +30,5 @@ void AddTransition::redo()
 {
   State* origin = scene_->getState(origin_);
   State* destination = scene_->getState(destination_);
-  origin->transitionTo(destination);
+  origin->transitionTo(destination, code_);
 }

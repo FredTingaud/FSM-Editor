@@ -2,7 +2,12 @@
 #include<fsm-editor/ExportVisitor.h>
 
 #include<fsm-editor/fsm-elements/State.h>
+#include<fsm-editor/model/GraphStateImpl.h>
+#include<fsm-editor/model/GraphTransitionImpl.h>
 #include <fsm-editor/undo/AddStateCommand.h>
+#include <fsm-editor/undo/AddTransition.h>
+#include <fsm-editor/undo/DeleteStateCommand.h>
+#include <fsm-editor/undo/DeleteTransition.h>
 #include <fsm-editor/undo/RenameState.h>
 #include <fsm-editor/undo/StartStateCommand.h>
 #include <fsm-editor/undo/UpdateCode.h>
@@ -12,13 +17,18 @@
 #include <QAction>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QClipboard>
+#include <QApplication>
+#include <QMimeData>
+#include <QTextStream>
 
 int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
+const QString FSMScene::STATE_STR = "state";
+const QString FSMScene::TRANSITION_STR = "transition";
 
-FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
+FSMScene::FSMScene()
   : editingElement_(nullptr)
-  , stateValidator_(stateValidator)
   , startingState_(nullptr)
   , startAct_(new QAction(QIcon(State::START_ICON), tr("Start"), this))
 {
@@ -26,6 +36,16 @@ FSMScene::FSMScene(std::function<QString(const QString&)> stateValidator)
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
   connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
   connect(startAct_, SIGNAL(triggered()), SLOT(setSelectionAsStartState()));
+}
+
+void FSMScene::setNameValidator(std::function<QString(const QString&)> stateValidator)
+{
+  stateValidator_ = stateValidator;
+}
+
+void FSMScene::setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter)
+{
+  copyWriter_ = copyWriter;
 }
 
 void FSMScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -169,8 +189,8 @@ void FSMScene::changeStartState(State* start)
   startingState_ = start;
   if (startingState_)
   {
-  startingState_->setStart(true);
-}
+    startingState_->setStart(true);
+  }
 }
 
 Graph FSMScene::graph() const
@@ -189,6 +209,48 @@ Graph FSMScene::graph() const
   result.setData(std::move(everyStates), std::move(everyTransitions));
   return result;
 }
+
+Graph FSMScene::copyGraph() const
+{
+  Graph result;
+  QList<GraphState*> everyStates;
+  QList<GraphTransition*> everyTransitions;
+  copySelectedStates(everyStates);
+  copySelectedTransitions(everyTransitions);
+  result.setData(std::move(everyStates), std::move(everyTransitions));
+  return result;
+}
+
+void FSMScene::copySelectedTransitions(QList<GraphTransition*>& everyTransitions) const
+{
+  for (auto state : states_)
+  {
+    for (auto transition : state.second->getTransitions())
+    {
+      if (transition->isSelected())
+      {
+        GraphTransitionImpl* t = new GraphTransitionImpl(transition->getOriginState(), transition->getDestinationState());
+        t->setCode(transition->getCode());
+        everyTransitions.append(t);
+      }
+    }
+  }
+}
+
+void FSMScene::copySelectedStates(QList<GraphState*>& everyStates) const
+{
+  for (auto state : states_)
+  {
+    if (state.second->isSelected())
+    {
+      GraphStateImpl* copyState = new GraphStateImpl(state.second->name(), false);
+      copyState->setCode(state.second->getCode());
+      copyState->setPosition(state.second->pos() - selectionArea().boundingRect().topLeft());
+      everyStates.append(copyState);
+    }
+  }
+}
+
 void FSMScene::clearAll()
 {
   states_.clear();
@@ -227,6 +289,169 @@ void FSMScene::setNewGraph(Graph&& graph)
     auto dest = getState(transition->getDestinationState());
     res->transitionTo(dest, transition->getCode());
   }
+}
+
+void FSMScene::copy()
+{
+  QClipboard* clipboard = QApplication::clipboard();
+  QByteArray byteArray;
+  QDataStream out(&byteArray, QIODevice::WriteOnly);
+  Graph selection = copyGraph();
+  writeGraph(out, selection);
+  QMimeData* data = new QMimeData();
+  data->setData("fsm/graph", byteArray);
+  data->setText(copyTextVersion(selection));
+  clipboard->setMimeData(data);
+}
+
+void FSMScene::cut()
+{
+  copy();
+  deleteSelection();
+}
+
+QString FSMScene::copyTextVersion(Graph selection)
+{
+  QString textVersion;
+  QTextStream out(&textVersion, QIODevice::WriteOnly);
+  copyWriter_(selection, out);
+  return textVersion;
+}
+
+void FSMScene::deleteSelection()
+{
+  bool started = false;
+  QList<State*> deletedStates;
+  QList<Transition*> deletedTransitions;
+  fillSelectionLists(deletedStates, deletedTransitions);
+  deleteSelectionLists(deletedStates, deletedTransitions);
+}
+
+void FSMScene::fillSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions)
+{
+  for (QGraphicsItem* item : selectedItems())
+  {
+    State* state = dynamic_cast<State*>(item);
+    if (state)
+    {
+      deletedStates.push_back(state);
+    }
+    else
+    {
+      Transition* transition = dynamic_cast<Transition*>(item);
+      if (transition)
+      {
+        deletedTransitions.push_back(transition);
+      }
+    }
+  }
+}
+
+void FSMScene::deleteSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions)
+{
+  if (!deletedStates.isEmpty() || !deletedTransitions.isEmpty())
+  {
+    Q_EMIT openCommandGroup(tr("Delete selection"));
+    for (Transition* transition : deletedTransitions)
+    {
+      pushCommand(new DeleteTransition(this, transition->getOriginState(), transition->getDestinationState()));
+    }
+    for (State* state : deletedStates)
+    {
+      pushCommand(new DeleteStateCommand(this, state));
+    }
+    Q_EMIT closeCommandGroup();
+  }
+}
+
+void FSMScene::writeGraph(QDataStream& out, const Graph& graph)
+{
+  QString type;
+  for (GraphState* g : graph.getAllStates())
+  {
+    type = STATE_STR;
+    out << type << g->name() << g->getCode() << g->getPosition() << g->isStart();
+  }
+  for (GraphTransition* t : graph.getAllTransitions())
+  {
+    type = TRANSITION_STR;
+    out << type << t->getCode() << t->getOriginState() << t->getDestinationState();
+  }
+}
+
+void FSMScene::paste()
+{
+  QClipboard* clipboard = QApplication::clipboard();
+  auto data = clipboard->mimeData();
+  if (data->hasFormat("fsm/graph"))
+  {
+    QByteArray byteArray = data->data("fsm/graph");
+    Q_EMIT(openCommandGroup(tr("Paste clipboard")));
+    QDataStream in(&byteArray, QIODevice::ReadOnly);
+    readGraph(in);
+    Q_EMIT(closeCommandGroup());
+  }
+}
+
+void FSMScene::readGraph(QDataStream& in)
+{
+  QMap<QString, QString> names;
+  while (!in.atEnd())
+  {
+    QString type;
+    in >> type;
+    if (type == STATE_STR)
+    {
+      readState(in, names);
+    }
+    else if (type == TRANSITION_STR)
+    {
+      readTransition(in, names);
+    }
+    else
+    {
+      qFatal(qPrintable("unknown type " + type));
+    }
+  }
+}
+
+void FSMScene::readState(QDataStream& in, QMap<QString, QString> &names)
+{
+  QString name;
+  QString code;
+  QPointF position;
+  bool isStart;
+  in >> name >> code >> position >> isStart;
+  QString nextName = name;
+  while (states_.count(nextName))
+  {
+    nextName = "copy_" + nextName;
+  }
+  names[name] = nextName;
+  pushCommand(new AddStateCommand(this, nextName, position));
+  pushCommand(new UpdateCode(this, nextName, code));
+}
+
+void FSMScene::readTransition(QDataStream& in, QMap<QString, QString> &names)
+{
+  QString code;
+  QString destination;
+  QString origin;
+  in >> code >> origin >> destination;
+
+  origin = replaceNameIfNeeded(names, origin);
+  destination = replaceNameIfNeeded(names, destination);
+
+  pushCommand(new AddTransition(this, origin, destination, code));
+}
+
+QString FSMScene::replaceNameIfNeeded(QMap<QString, QString>& names, const QString& inputName)
+{
+  if (names.contains(inputName))
+  {
+    return names[inputName];
+  }
+  return inputName;
 }
 
 void FSMScene::setSelectionAsStartState()

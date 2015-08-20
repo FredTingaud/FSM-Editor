@@ -2,6 +2,8 @@
 
 #include <fsm-editor/model/GraphTransition.h>
 
+#include <fsm-editor/ExportVisitor.h>
+
 /**
  * @brief Minimalistic implementation of the GraphTransition.
  */
@@ -15,7 +17,7 @@ public:
 
   virtual QString visit(ExportVisitor& visitor) const override
   {
-    throw std::exception("The method or operation is not implemented.");
+    return visitor.exportElement(*this);
   }
 
   virtual QString getOriginState() const override

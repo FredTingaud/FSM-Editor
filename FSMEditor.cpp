@@ -23,11 +23,13 @@ const QString FSMEditor::LAST_GEOMETRY = "last_geometry";
 
 FSMEditor::FSMEditor(Settings& settings)
   : settings_(settings)
-  , scene_([&](const QString& name){return settings_.validateStateName(name); })
   , fsmView_(&scene_, this)
   , saveAction_(nullptr)
 {
   Q_INIT_RESOURCE(fsm_editor_resources);
+
+  scene_.setNameValidator([&](const QString& name){return settings_.validateStateName(name); });
+  scene_.setCopyWriter([&](Graph& g, QTextStream& stream){return settings_.getWriter().write(g, stream); });
   makeLuaEditor();
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());
@@ -38,6 +40,8 @@ FSMEditor::FSMEditor(Settings& settings)
   setCurrentFile("");
 
   connect(&scene_, SIGNAL(command(QUndoCommand*)), SLOT(stackCommand(QUndoCommand*)));
+  connect(&scene_, SIGNAL(openCommandGroup(const QString&)), SLOT(beginMacro(const QString&)));
+  connect(&scene_, SIGNAL(closeCommandGroup()), SLOT(endMacro()));
   connect(&undoStack_, SIGNAL(cleanChanged(bool)), SLOT(modifiedChanged(bool)));
   loadSettings();
 }
@@ -92,6 +96,16 @@ bool FSMEditor::newGraph()
 void FSMEditor::stackCommand(QUndoCommand* command)
 {
   undoStack_.push(command);
+}
+
+void FSMEditor::beginMacro(const QString& title)
+{
+  undoStack_.beginMacro(title);
+}
+
+void FSMEditor::endMacro()
+{
+  undoStack_.endMacro();
 }
 
 void FSMEditor::makeLuaEditor()
@@ -178,7 +192,10 @@ void FSMEditor::fillAllMenus(QToolBar* toolbar)
     completeFileMenu(fileMenu);
     toolbar->addSeparator();
   }
-  fillMenu(toolbar, menu->addMenu(tr("&Edition")), createUndoRedoActions());
+  QMenu * editionMenu = menu->addMenu(tr("&Edition"));
+  fillMenu(toolbar, editionMenu, createUndoRedoActions());
+  toolbar->addSeparator();
+  fillMenu(toolbar, editionMenu, createCopyPasteActions());
   toolbar->addSeparator();
   fillMenu(toolbar, menu->addMenu(tr("&View")), createZoomActions());
   toolbar->addSeparator();
@@ -238,6 +255,22 @@ QList<std::tuple<QAction*, bool>> FSMEditor::createUndoRedoActions()
   redo->setIcon(QIcon(":/ic_redo.png"));
 
   result << std::make_tuple(undo, true) << std::make_tuple(redo, true);
+  return result;
+}
+
+QList<std::tuple<QAction*, bool>> FSMEditor::createCopyPasteActions()
+{
+  QList<std::tuple<QAction*, bool>> result;
+  QAction* cutAct = new QAction(QIcon(":/ic_content_cut.png"), tr("Cut"), this);
+  cutAct->setShortcut(QKeySequence::Cut);
+  QAction* copyAct = new QAction(QIcon(":/ic_content_copy.png"), tr("Copy"), this);
+  copyAct->setShortcut(QKeySequence::Copy);
+  QAction* pasteAct = new QAction(QIcon(":/ic_content_paste.png"), tr("Paste"), this);
+  pasteAct->setShortcut(QKeySequence::Paste);
+  connect(cutAct, SIGNAL(triggered()), &scene_, SLOT(cut()));
+  connect(copyAct, SIGNAL(triggered()), &scene_, SLOT(copy()));
+  connect(pasteAct, SIGNAL(triggered()), &scene_, SLOT(paste()));
+  result << std::make_tuple(cutAct, true) << std::make_tuple(copyAct, true) << std::make_tuple(pasteAct, true);
   return result;
 }
 

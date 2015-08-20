@@ -76,6 +76,8 @@ protected:
 
 private:
   Q_SLOT void stackCommand(QUndoCommand* command);
+  Q_SLOT void beginMacro(const QString& title);
+  Q_SLOT void endMacro();
   Q_SLOT void transferCodeChanged();
   Q_SLOT void displaySetCode(const QString& code);
   Q_SLOT void hideCode();
@@ -94,6 +96,7 @@ private:
   void fillMenu(QToolBar* toolbar, QMenu* menu, const QList<std::tuple<QAction*, bool>>& actions);
   QList<std::tuple<QAction*, bool>> createElementActions();
   QList<std::tuple<QAction*, bool>> createUndoRedoActions();
+  QList<std::tuple<QAction*, bool>> createCopyPasteActions();
   QList<std::tuple<QAction*, bool>> createZoomActions();
   QList<std::tuple<QAction*, bool>> createFileActions();
 

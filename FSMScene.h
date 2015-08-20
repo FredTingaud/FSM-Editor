@@ -11,6 +11,7 @@ class Transition;
 class FSMElement;
 class ExportVisitor;
 class QAction;
+class QTextStream;
 
 /**
  * @brief FSMScene displays the graph.
@@ -24,7 +25,17 @@ class FSMScene : public QGraphicsScene
 
   using super = QGraphicsScene;
 public:
-  FSMScene(std::function<QString(const QString&)> stateValidator);
+  FSMScene();
+
+  /**
+   * Set the custom name validator, passed by the settings.
+   */
+  void setNameValidator(std::function<QString(const QString&)> stateValidator);
+
+  /**
+   * Set the writer used by copy method to create string version of clipboard copy.
+   */
+  void setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter);
 
   /**
    * Overrides double click handling, to create a state when double clicking.
@@ -40,6 +51,16 @@ public:
    * Signal emitted when a command was pushed.
    */
   Q_SIGNAL void command(QUndoCommand* command);
+  /**
+   * Signal emitted when multiple commands are going to be pushed,
+   * that are going to be squashed together.
+   */
+  Q_SIGNAL void openCommandGroup(const QString& title);
+  /**
+  * Signal emitted after multiple commands were pushed,
+  * that should be squashed together.
+  */
+  Q_SIGNAL void closeCommandGroup();
   /**
    * Signal emitted when the current code is changed.
    */
@@ -124,6 +145,30 @@ public:
    */
   void setNewGraph(Graph&& graph);
 
+  /**
+   * Copy selection to the clipboard both as an internal format graph and
+   * as a string using the FSMWriter.
+   */
+  Q_SLOT void copy();
+
+  /**
+   * Copy selection to the clipboard both as an internal format graph and
+   * as a string using the FSMWriter, then delete it from the scene.
+   */
+  Q_SLOT void cut();
+
+  /**
+   * Paste the clipboard content if it contains a graph.
+   */
+  Q_SLOT void paste();
+
+  /**
+   * Delete selected states and transitions.
+   */
+  Q_SLOT void deleteSelection();
+
+  void deleteSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
+
 public:
   /**
    * Ids used by the QUndoCommands to merge some changes.
@@ -178,15 +223,56 @@ private:
    */
   void clearAll();
 
+  /**
+   * Read a graph and output it in a output stream.
+   */
+  void writeGraph(QDataStream& out, const Graph& graph);
+
+  /**
+   * Create a subgraph from an input stream.
+   */
+  void readGraph(QDataStream& in);
+
+  /**
+   * Create a transition from an input stream.
+   */
+  void readTransition(QDataStream& in, QMap<QString, QString> &names);
+
+  /**
+   * Replace name if it is contained in the dictionary.
+   */
+  QString replaceNameIfNeeded(QMap<QString, QString>& names, const QString& inputName);
+
+  /**
+   * Create a state from an input stream.
+   */
+  void readState(QDataStream& in, QMap<QString, QString> &names);
+
+  /**
+   * Copy the selection in a model graph.
+   */
+  Graph copyGraph() const;
+
+  void copySelectedTransitions(QList<GraphTransition*> &everyTransitions) const;
+
+  void copySelectedStates(QList<GraphState*> &everyStates) const;
+
+  QString copyTextVersion(Graph selection);
+
+  void fillSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
+
 private:
   static int index;
   static const QColor BACKGROUND_COLOR;
+  static const QString STATE_STR;
+  static const QString TRANSITION_STR;
 
 private:
   std::map<QString, State*> states_;
+  std::function<QString(const QString&)> stateValidator_;
+  std::function<void(Graph&, QTextStream&)> copyWriter_;
   State* startingState_;
   FSMElement* editingElement_;
-  std::function<QString(const QString&)> stateValidator_;
   QAction* startAct_;
   QPointF pressPos_;
 };
