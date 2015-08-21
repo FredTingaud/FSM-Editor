@@ -21,6 +21,8 @@
 #include <QApplication>
 #include <QMimeData>
 #include <QTextStream>
+#include <QInputDialog>
+#include <QMessageBox>
 
 int FSMScene::index = 0;
 const QColor FSMScene::BACKGROUND_COLOR = QColor(70, 70, 70);
@@ -32,14 +34,18 @@ FSMScene::FSMScene()
   , startingState_(nullptr)
   , startAct_(new QAction(QIcon(State::START_ICON), tr("Start"), this))
   , deleteAct_(new QAction(QIcon(":/ic_delete.png"), tr("Delete"), this))
+  , renameAct_(new QAction(QIcon(":/ic_label.png"), tr("Rename"), this))
 {
   startAct_->setEnabled(false);
   deleteAct_->setShortcut(QKeySequence::Delete);
   deleteAct_->setEnabled(false);
+  renameAct_->setShortcut(QKeySequence("F2"));
+  renameAct_->setEnabled(false);
   setBackgroundBrush(QBrush(BACKGROUND_COLOR));
   connect(this, SIGNAL(selectionChanged()), SLOT(checkSelection()));
   connect(startAct_, SIGNAL(triggered()), SLOT(setSelectionAsStartState()));
   connect(deleteAct_, SIGNAL(triggered()), SLOT(deleteSelection()));
+  connect(renameAct_, SIGNAL(triggered()), SLOT(askRenameSelection()));
 }
 
 void FSMScene::setNameValidator(std::function<QString(const QString&)> stateValidator)
@@ -83,6 +89,7 @@ void FSMScene::checkSelection()
   {
     State* state = dynamic_cast<State*>(selectedItems().at(0));
     startAct_->setEnabled(state != nullptr);
+    renameAct_->setEnabled(state != nullptr);
     deleteAct_->setEnabled(true);
   }
 }
@@ -333,6 +340,30 @@ void FSMScene::deleteSelection()
   deleteSelectionLists(deletedStates, deletedTransitions);
 }
 
+Q_SLOT void FSMScene::askRenameSelection()
+{
+  State* state = dynamic_cast<State*>(selectedItems().first());
+  if (state)
+  {
+    askRename(state);
+  }
+}
+
+void FSMScene::askRename(State* state)
+{
+  bool ok;
+  QString newName = QInputDialog::getText(0, QObject::tr("Rename state %1").arg(state->name()), QObject::tr("Rename to:"), QLineEdit::Normal, state->name(), &ok);
+  if (ok  && newName != state->name())
+  {
+    QString error = renameState(state, newName);
+    if (!error.isEmpty())
+    {
+      QMessageBox::warning(0, QObject::tr("Couldn't rename to %1").arg(newName)
+                           , QObject::tr("The state couldn't be renamed to %1 because of the following error:\n%2").arg(newName).arg(error));
+    }
+  }
+}
+
 void FSMScene::fillSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions)
 {
   for (QGraphicsItem* item : selectedItems())
@@ -474,6 +505,11 @@ QAction* FSMScene::getStartAction() const
 QAction* FSMScene::getDeleteAction() const
 {
   return deleteAct_;
+}
+
+QAction* FSMScene::getRenameAction() const
+{
+  return renameAct_;
 }
 
 void FSMScene::setStateName(State* state, const QString& name)

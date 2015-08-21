@@ -32,8 +32,6 @@ public:
 
   virtual QString name() const override;
 
-  virtual void keyPressEvent(QKeyEvent *event) override;
-  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
@@ -97,11 +95,6 @@ public:
    * Change the name and update the text drawn on it.
    */
   void setName(const QString& name);
-
-  /**
-   * Open an input dialog and call rename on the state if input text is a valid name.
-   */
-  void askRename();
 
   /**
    * Sets whether this is a start state.

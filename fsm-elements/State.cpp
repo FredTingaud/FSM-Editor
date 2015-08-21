@@ -8,8 +8,6 @@
 #include <QPainter>
 #include <QDebug>
 #include <QKeyEvent>
-#include <QInputDialog>
-#include <QMessageBox>
 
 const qreal State::WIDTH = 50;
 const qreal State::HEIGHT = 20;
@@ -114,23 +112,6 @@ void State::reactToPositionChange()
 QString State::name() const
 {
   return title_;
-}
-
-void State::keyPressEvent(QKeyEvent *event)
-{
-  if (event->key() == Qt::Key_F2)
-  {
-    askRename();
-  }
-  else
-  {
-    super::keyPressEvent(event);
-  }
-}
-
-void State::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-  askRename();
 }
 
 void State::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -253,21 +234,6 @@ void State::setName(const QString& name)
 {
   title_ = name;
   update();
-}
-
-void State::askRename()
-{
-  bool ok;
-  QString newName = QInputDialog::getText(0, QObject::tr("Rename state %1").arg(name()), QObject::tr("Rename to:"), QLineEdit::Normal, title_, &ok);
-  if (ok)
-  {
-    QString error = scene()->renameState(this, newName);
-    if (!error.isEmpty())
-    {
-      QMessageBox::warning(0, QObject::tr("Couldn't rename to %1").arg(newName)
-                           , QObject::tr("The state couldn't be renamed to %1 because of the following error:\n%2").arg(newName).arg(error));
-    }
-  }
 }
 
 bool State::isStart() const

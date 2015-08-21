@@ -138,6 +138,11 @@ public:
   QAction* getDeleteAction() const;
 
   /**
+   * @return An action renaming the selection.
+   */
+  QAction* getRenameAction() const;
+
+  /**
    * Classes outside the QGraphicsScene should handle model objects,
    * not directly the graphics item. We want to be able to change the
    * architecture in the future.
@@ -172,7 +177,10 @@ public:
    */
   Q_SLOT void deleteSelection();
 
-  void deleteSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
+  /**
+   * Rename the first selected element.
+   */
+  Q_SLOT void askRenameSelection();
 
 public:
   /**
@@ -266,6 +274,13 @@ private:
 
   void fillSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
 
+  /**
+   * Open an input dialog and call rename on the state if input text is a valid name.
+   */
+  void askRename(State* state);
+
+  void deleteSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
+
 private:
   static int index;
   static const QColor BACKGROUND_COLOR;
@@ -280,5 +295,6 @@ private:
   FSMElement* editingElement_;
   QAction* startAct_;
   QAction* deleteAct_;
+  QAction* renameAct_;
   QPointF pressPos_;
 };
