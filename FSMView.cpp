@@ -1,6 +1,7 @@
 #include <fsm-editor/FSMView.h>
 
 #include <QKeyEvent>
+#include <QPainter>
 
 FSMView::FSMView(QGraphicsScene* scene, QWidget* parent)
   : super(scene, parent)
@@ -55,5 +56,16 @@ void FSMView::zoomView(int delta)
   else
   {
     zoomOut();
+  }
+}
+
+void FSMView::drawBackground(QPainter * painter, const QRectF & rect)
+{
+  super::drawBackground(painter, rect);
+  if (scene()->items().empty())
+  {
+    QRectF rect = mapToScene(visibleRegion().boundingRect()).boundingRect();
+    painter->setPen(Qt::white);
+    painter->drawText(rect, Qt::AlignCenter, tr("Double click to\ncreate a new state"));
   }
 }

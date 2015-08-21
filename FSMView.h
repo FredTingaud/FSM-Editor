@@ -42,4 +42,6 @@ protected:
   virtual void keyPressEvent(QKeyEvent *event) override;
 
   virtual void keyReleaseEvent(QKeyEvent *event) override;
+
+  virtual void drawBackground(QPainter * painter, const QRectF & rect) override;
 };
