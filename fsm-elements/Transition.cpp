@@ -299,10 +299,10 @@ void Transition::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
       if (child != nullptr && child != origin_)
       {
         origin_->pushCommand(new AddTransition(fsmScene(), origin_->name(), child->name()));
-        updatePos();
         break;
       }
     }
+    updatePos();
   }
   super::mouseReleaseEvent(event);
 }
