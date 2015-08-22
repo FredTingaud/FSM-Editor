@@ -65,6 +65,8 @@ public:
 
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 
+  void setCurrentPen(QPainter * painter);
+
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
@@ -83,15 +85,18 @@ public:
 
   virtual QString getDestinationState() const override;
 
+  virtual void setInError(const QString& error) override;
+  virtual void clearError() override;
+
 private:
   void initialize();
 
   /**
    * Calculate the shape of the transition.
    */
-  QList<QPolygonF> calculateShape() const;
+  QList<QPolygonF> calculateShape();
 
-  QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle) const;
+  QList<QPolygonF> calculatePluggedArrow(QPainterPath& result, const QPolygonF& triangle);
   QList<QPolygonF> calculateDangling(QPainterPath& result, const QPolygonF& triangle) const;
   QList<QPolygonF> calculateMovingArrow(QPainterPath result, const QPolygonF& triangle) const;
 
@@ -105,6 +110,7 @@ private:
 
   FSMScene* fsmScene() const;
 
+  void createFlagHolder(const QLineF& line);
 private:
   static const qreal LINK_SIZE;
   static const qreal ARC;
@@ -117,4 +123,6 @@ private:
   QPointF movingPos_;
   bool hovered_;
   bool parentHovered_;
+  QPainterPath shape_;
+  QRectF flagHolder_;
 };

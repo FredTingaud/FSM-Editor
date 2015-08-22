@@ -53,6 +53,11 @@ void FSMScene::setNameValidator(std::function<QString(const QString&)> stateVali
   stateValidator_ = stateValidator;
 }
 
+void FSMScene::setCodeValidator(std::function<QString(const QString&)> codeValidator)
+{
+  codeValidator_ = codeValidator;
+}
+
 void FSMScene::setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter)
 {
   copyWriter_ = copyWriter;
@@ -160,6 +165,15 @@ void FSMScene::setCode(FSMElement* element, const QString& code)
 {
   editingElement_ = element;
   Q_EMIT codeChanged(code);
+  QString message = codeValidator_(code);
+  if (message.isEmpty())
+  {
+    editingElement_->clearError();
+  }
+  else
+  {
+    editingElement_->setInError(message);
+  }
 }
 
 void FSMScene::updateCode(const QString& code)
@@ -399,6 +413,24 @@ void FSMScene::deleteSelectionLists(QList<State*> &deletedStates, QList<Transiti
     }
     Q_EMIT closeCommandGroup();
   }
+}
+
+FSMElement* FSMScene::getErrorElement() const
+{
+  for (auto statePair : states_)
+  {
+    State* state = statePair.second;
+    if (state->isInError())
+      return state;
+    for (Transition* transition : state->getTransitions())
+    {
+      if (transition->isInError())
+      {
+        return transition;
+      }
+    }
+  }
+  return nullptr;
 }
 
 void FSMScene::writeGraph(QDataStream& out, const Graph& graph)

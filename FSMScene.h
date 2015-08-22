@@ -33,6 +33,11 @@ public:
   void setNameValidator(std::function<QString(const QString&)> stateValidator);
 
   /**
+   * Set the custom code validator, passed by the settings.
+   */
+  void setCodeValidator(std::function<QString(const QString&)> codeValidator);
+
+  /**
    * Set the writer used by copy method to create string version of clipboard copy.
    */
   void setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter);
@@ -182,6 +187,11 @@ public:
    */
   Q_SLOT void askRenameSelection();
 
+  /**
+   * @return The first element in error if any. nullptr otherwise.
+   */
+  FSMElement* getErrorElement() const;
+
 public:
   /**
    * Ids used by the QUndoCommands to merge some changes.
@@ -291,6 +301,7 @@ private:
   std::map<QString, State*> states_;
   std::function<QString(const QString&)> stateValidator_;
   std::function<void(Graph&, QTextStream&)> copyWriter_;
+  std::function<QString(const QString&)> codeValidator_;
   State* startingState_;
   FSMElement* editingElement_;
   QAction* startAct_;

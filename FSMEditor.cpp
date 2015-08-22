@@ -2,6 +2,7 @@
 #include <fsm-editor/Settings.h>
 #include <fsm-editor/io/FSMWriter.h>
 #include <fsm-editor/io/FSMReader.h>
+#include <fsm-editor/fsm-elements/FSMElement.h>
 
 #include <QMenuBar>
 #include <QGridLayout>
@@ -30,6 +31,7 @@ FSMEditor::FSMEditor(Settings& settings)
 
   scene_.setNameValidator([&](const QString& name){return settings_.validateStateName(name); });
   scene_.setCopyWriter([&](Graph& g, QTextStream& stream){return settings_.getWriter().write(g, stream); });
+  scene_.setCodeValidator([&](const QString& code) {return settings_.validateCode(code); });
   makeLuaEditor();
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());
@@ -310,6 +312,17 @@ bool FSMEditor::save()
   }
 }
 
+bool FSMEditor::checkValidity()
+{
+  FSMElement* errorElement = scene_.getErrorElement();
+  if (errorElement != nullptr)
+  {
+    QMessageBox::critical(0, tr("Invalid graph element"), tr("The following graph element has invalid code: %1.\nMessage is:\n%2").arg(errorElement->name()).arg(errorElement->getErrorMessage()));
+    return false;
+  }
+  return true;
+}
+
 bool FSMEditor::saveAs()
 {
   QString fileName = QFileDialog::getSaveFileName(0, tr("Save Finite State Machine"), lastDir_, "*." + settings_.getExportExtension());
@@ -325,6 +338,8 @@ bool FSMEditor::saveAs()
 
 bool FSMEditor::save(const QString& fileName)
 {
+  if (!checkValidity())
+    return false;
   QFile file(fileName);
   if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     return false;

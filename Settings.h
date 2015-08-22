@@ -53,6 +53,13 @@ public:
   virtual QString validateStateName(const QString& name);
 
   /**
+  * Validates whether the code of an element is correctly formed for export.
+  * @return the error message if any. Empty string for no error.
+  * @Default validates whether the number of opening and closing curly braces are equal.
+  */
+  virtual QString validateCode(const QString& valid);
+
+  /**
    * @return whether the top level menu is visible.
    * It could make sense to hide it when the editor is embedded.
    */

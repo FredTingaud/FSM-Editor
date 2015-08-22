@@ -63,6 +63,10 @@ public:
   virtual QString getCode() const override;
   virtual void setCode(const QString& code) override;
 
+  virtual void setInError(const QString& error) override;
+
+  virtual void clearError() override;
+
   /**
    * @return The transition with passed name. nullptr if it is not present.
    */
@@ -132,8 +136,14 @@ private:
    */
   FSMScene* scene() const;
 
+  /**
+   * Recalculate rect.
+   */
+  void updateRect();
+
 public:
   static const QString START_ICON;
+  static const QString ERROR_ICON;
 
 private:
   static const qreal WIDTH;

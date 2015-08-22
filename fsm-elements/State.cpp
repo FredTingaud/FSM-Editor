@@ -16,6 +16,7 @@ const qreal State::V_MARGIN = 4;
 const QColor State::PEN_COLOR = QColor(190, 190, 190);
 const QColor State::START_PEN_COLOR = QColor(180, 235, 100);
 const QString State::START_ICON = ":/ic_flag.png";
+const QString State::ERROR_ICON = ":/ic_error_outline.png";
 
 State::State(const QString& title, const QPointF& position, std::function<void(QUndoCommand*)>&& pushStack)
   : QGraphicsRectItem(QRectF(0, 0, WIDTH, HEIGHT))
@@ -56,6 +57,13 @@ void State::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->fillRect(right, pen().color());
     QPixmap flag = QPixmap(START_ICON);
     painter->drawPixmap(right, flag, QRectF(0, 0, flag.width(), flag.height()));
+  }
+  if (isInError())
+  {
+    QRectF left(-HEIGHT, 0, HEIGHT, HEIGHT);
+    painter->fillRect(left, Qt::red);
+    QPixmap errorIcon = QPixmap(ERROR_ICON);
+    painter->drawPixmap(left, errorIcon, QRectF(0, 0, errorIcon.width(), errorIcon.height()));
   }
 }
 
@@ -187,6 +195,18 @@ void State::setCode(const QString& code)
   scene()->setCode(this, getCode());
 }
 
+void State::setInError(const QString& error)
+{
+  FSMElement::setInError(error);
+  updateRect();
+}
+
+void State::clearError()
+{
+  FSMElement::clearError();
+  updateRect();
+}
+
 Transition* State::getTransitionByName(const QString& name) const
 {
   for (Transition* transition : transitions_)
@@ -243,16 +263,27 @@ bool State::isStart() const
 
 void State::setStart(bool start)
 {
-  if (start)
-  {
-    setRect(0, 0, WIDTH + HEIGHT, HEIGHT);
-  }
-  else
-  {
-    setRect(originalRect_);
-  }
   start_ = start;
+  updateRect();
   update();
+}
+
+void State::updateRect()
+{
+  QRectF result = originalRect_;
+  if (start_)
+  {
+    result.setWidth(result.width() + HEIGHT);
+  }
+  if (isInError())
+  {
+    result.setX(-HEIGHT);
+  }
+  if (result != rect())
+  {
+    setRect(result);
+    reactToPositionChange();
+  }
 }
 
 Transition* State::getTransitionTo(State* destination) const

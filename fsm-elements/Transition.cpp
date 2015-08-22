@@ -44,6 +44,20 @@ void Transition::updatePos()
 {
   prepareGeometryChange();
   setPos(origin_->pos());
+  QPainterPath path;
+  for (auto shape : calculateShape())
+  {
+    path.addPolygon(shape);
+  }
+  shape_ = path;
+  if (isInError())
+  {
+    shape_.addRect(flagHolder_);
+  }
+  else if (!flagHolder_.isEmpty())
+  {
+    flagHolder_ = QRectF();
+  }
 }
 
 bool Transition::isDangling() const
@@ -53,34 +67,47 @@ bool Transition::isDangling() const
 
 QRectF Transition::boundingRect() const
 {
-  QRectF result;
-  QList<QPolygonF> shape = calculateShape();
-  for (QPolygonF poly : shape)
-  {
-    result = result.united(poly.boundingRect());
-  }
-  return result;
+  return shape().boundingRect();
 }
 
 void Transition::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget /*= 0*/)
 {
   painter->setBrush(LINK_COLOR);
-  if (isSelected())
-  {
-    painter->setPen(Qt::white);
-  }
-  else
-  {
-    painter->setPen(LINK_BORDER);
-  }
-  QList<QPolygonF> shape = calculateShape();
-  for (QPolygonF poly : shape)
+  setCurrentPen(painter);
+  QList<QPolygonF> shapes = calculateShape();
+  for (QPolygonF poly : shapes)
   {
     painter->drawPolygon(poly);
   }
+  if (isInError())
+  {
+    painter->drawPixmap(flagHolder_, QPixmap(State::ERROR_ICON), QRectF(0, 0, 48, 48));
+  }
 }
 
-QList<QPolygonF> Transition::calculateShape() const
+void Transition::setCurrentPen(QPainter * painter)
+{
+  QPen pen;
+  if (isInError())
+  {
+    QVector<qreal> pattern;
+    pattern << 1 << 2;
+    pen.setDashPattern(pattern);
+    pen.setCapStyle(Qt::FlatCap);
+  }
+
+  if (isSelected())
+  {
+    pen.setColor(Qt::white);
+  }
+  else
+  {
+    pen.setColor(LINK_BORDER);
+  }
+  painter->setPen(pen);
+}
+
+QList<QPolygonF> Transition::calculateShape()
 {
   QPainterPath result;
   QPolygonF triangle;
@@ -99,13 +126,14 @@ QList<QPolygonF> Transition::calculateShape() const
   }
 }
 
-QList<QPolygonF> Transition::calculatePluggedArrow(QPainterPath &result, const QPolygonF& triangle) const
+QList<QPolygonF> Transition::calculatePluggedArrow(QPainterPath &result, const QPolygonF& triangle)
 {
   QList<QPolygonF> polys;
   QPointF originPoint = getIntersection(mapFromItem(origin_, origin_->rect()).boundingRect());
   QPointF destPoint = getIntersection(mapFromItem(destination_, destination_->rect()).boundingRect());
   QLineF line(originPoint, destPoint);
   addBentLine(originPoint, line, destPoint, polys);
+  createFlagHolder(line);
   result.addPolygon(triangle);
   QTransform transformation;
   transformation.translate(destPoint.x(), destPoint.y());
@@ -145,7 +173,7 @@ QList<QPolygonF> Transition::calculateMovingArrow(QPainterPath result, const QPo
 QList<QPolygonF> Transition::calculateDangling(QPainterPath &result, const QPolygonF& triangle) const
 {
   QTransform transformation;
-  transformation.translate(origin_->rect().width(), 0.);
+  transformation.translate(origin_->rect().right(), 0.);
   transformation.rotate(-45);
   result.addPolygon(triangle);
   return result.toSubpathPolygons(transformation);
@@ -224,6 +252,25 @@ FSMScene* Transition::fsmScene() const
   return nullptr;
 }
 
+void Transition::createFlagHolder(const QLineF& line)
+{
+  QPointF center = QLineF::fromPolar(line.length() / 2, line.angle() + ARC / 2).translated(line.p1()).p2();
+  qreal halfSize = line.length() / 10;
+  flagHolder_ = QRectF(center.x() - halfSize, center.y() - halfSize, 2 * halfSize, 2 * halfSize);
+}
+
+void Transition::setInError(const QString& error)
+{
+  FSMElement::setInError(error);
+  updatePos();
+}
+
+void Transition::clearError()
+{
+  FSMElement::clearError();
+  updatePos();
+}
+
 QString Transition::getOriginState() const
 {
   return origin_->name();
@@ -241,12 +288,7 @@ QString Transition::getCode() const
 
 QPainterPath Transition::shape() const
 {
-  QPainterPath path;
-  for (auto shape : calculateShape())
-  {
-    path.addPolygon(shape);
-  }
-  return path;
+  return shape_;
 }
 
 QString Transition::name() const
@@ -282,8 +324,8 @@ void Transition::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   super::mouseMoveEvent(event);
   if (destination_ == nullptr)
   {
-    prepareGeometryChange();
     movingPos_ = event->scenePos();
+    updatePos();
   }
 }
 

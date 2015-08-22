@@ -85,6 +85,8 @@ private:
 
   void setCurrentFile(QString fileName);
 
+  bool checkValidity();
+
 private:
   QWidget* makeViewPanel();
   void makeLuaEditor();

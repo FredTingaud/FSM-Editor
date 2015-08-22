@@ -45,3 +45,12 @@ bool Settings::showFileActions()
 {
   return true;
 }
+
+QString Settings::validateCode(const QString& valid)
+{
+  if (valid.count("{") > valid.count("}"))
+    return QObject::tr("Missing %1 closing curly brace(s)").arg(valid.count("{") - valid.count("}"));
+  if (valid.count("{") < valid.count("}"))
+    return QObject::tr("Missing %1 opening curly brace(s)").arg(valid.count("}") - valid.count("{"));
+  return "";
+}
