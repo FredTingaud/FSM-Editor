@@ -31,7 +31,7 @@ FSMEditor::FSMEditor(Settings& settings)
   Q_INIT_RESOURCE(fsm_editor_resources);
 
   scene_.setNameValidator([&](const QString& name){return settings_.validateStateName(name); });
-  scene_.setCopyWriter([&](Graph& g, QTextStream& stream){return settings_.getWriter().write(g, stream); });
+  scene_.setCopyWriter([&](Graph&& g, QTextStream& stream){return settings_.getWriter().write(std::move(g), stream); });
   scene_.setCodeValidator([&](const QString& code) {return settings_.validateCode(code); });
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());

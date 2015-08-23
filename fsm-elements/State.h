@@ -6,9 +6,10 @@
 
 #include <fsm-editor/fsm-elements/Transition.h>
 
-#include <functional>
-
 #include <QUndoCommand>
+
+#include <functional>
+#include <memory>
 
 class FSMScene;
 
@@ -109,6 +110,11 @@ public:
    * @return whether this is a start date.
    */
   virtual bool isStart() const override;
+
+  /**
+   * @return a unique pointer to a model object describing this state.
+   */
+  std::unique_ptr<GraphState> modelObject(const QPointF& translated = QPointF()) const;
 
 private:
   /**

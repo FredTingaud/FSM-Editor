@@ -40,7 +40,7 @@ public:
   /**
    * Set the writer used by copy method to create string version of clipboard copy.
    */
-  void setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter);
+  void setCopyWriter(std::function<void(Graph&&, QTextStream&)> copyWriter);
 
   /**
    * Overrides double click handling, to create a state when double clicking.
@@ -276,11 +276,11 @@ private:
    */
   Graph copyGraph() const;
 
-  void copySelectedTransitions(QList<GraphTransition*> &everyTransitions) const;
+  void copySelectedTransitions(std::list<std::unique_ptr<GraphTransition>> &everyTransitions) const;
 
-  void copySelectedStates(QList<GraphState*> &everyStates) const;
+  void copySelectedStates(std::list<std::unique_ptr<GraphState>> &everyStates) const;
 
-  QString copyTextVersion(Graph selection);
+  QString copyTextVersion(Graph&& selection);
 
   void fillSelectionLists(QList<State*> &deletedStates, QList<Transition*> &deletedTransitions);
 
@@ -300,7 +300,7 @@ private:
 private:
   std::map<QString, State*> states_;
   std::function<QString(const QString&)> stateValidator_;
-  std::function<void(Graph&, QTextStream&)> copyWriter_;
+  std::function<void(Graph&&, QTextStream&)> copyWriter_;
   std::function<QString(const QString&)> codeValidator_;
   State* startingState_;
   FSMElement* editingElement_;

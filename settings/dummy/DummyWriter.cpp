@@ -9,15 +9,15 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-void DummyWriter::write(Graph& scene, QTextStream& out)
+void DummyWriter::write(Graph&& scene, QTextStream& out)
 {
   static DummyVisitor visitor;
 
-  for (GraphState* state : scene.getAllStates())
+  for (auto&& state : scene.getAllStates())
   {
     out << state->visit(visitor) << "\n";
   }
-  for (GraphTransition* transition : scene.getAllTransitions())
+  for (auto&& transition : scene.getAllTransitions())
   {
     out << transition->visit(visitor) << "\n";
   }

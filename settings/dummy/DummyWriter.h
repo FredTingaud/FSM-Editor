@@ -11,5 +11,5 @@ public:
   /**
    * Writes into given output stream the passed graph.
    */
-  virtual void write(Graph& scene, QTextStream& out) override;
+  virtual void write(Graph&& scene, QTextStream& out) override;
 };

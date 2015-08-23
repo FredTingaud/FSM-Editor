@@ -5,6 +5,7 @@
 #include <fsm-editor/fsm-elements/State.h>
 #include <fsm-editor/undo/AddTransition.h>
 #include <fsm-editor/undo/DeleteTransition.h>
+#include <fsm-editor/model/GraphTransitionImpl.h>
 
 #include <QPainter>
 #include <QGraphicsScene>
@@ -225,6 +226,13 @@ void Transition::setParentHovered(bool hovered)
 {
   parentHovered_ = hovered;
   updateVisibility();
+}
+
+std::unique_ptr<GraphTransition> Transition::modelObject() const
+{
+  std::unique_ptr<GraphTransitionImpl> result = std::make_unique<GraphTransitionImpl>(getOriginState(), getDestinationState());
+  result->setCode(getCode());
+  return std::move(result);
 }
 
 void Transition::updateVisibility()

@@ -4,6 +4,7 @@
 #include <fsm-editor/ExportVisitor.h>
 #include <fsm-editor/undo/MoveStateCommand.h>
 #include <fsm-editor/undo/DeleteStateCommand.h>
+#include <fsm-editor/model/GraphStateImpl.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -259,6 +260,14 @@ void State::setName(const QString& name)
 bool State::isStart() const
 {
   return start_;
+}
+
+std::unique_ptr<GraphState> State::modelObject(const QPointF& translated/* = QPointF()*/) const
+{
+  std::unique_ptr<GraphStateImpl> result = std::make_unique<GraphStateImpl>(name(), isStart());
+  result->setCode(getCode());
+  result->setPosition(getPosition() + translated);
+  return std::move(result);
 }
 
 void State::setStart(bool start)

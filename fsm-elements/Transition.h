@@ -5,6 +5,8 @@
 
 #include<QGraphicsItem>
 
+#include <memory>
+
 class State;
 class FSMScene;
 
@@ -61,11 +63,14 @@ public:
    */
   void setParentHovered(bool hovered);
 
+  /**
+   * @return a unique pointer to a model object describing this transition.
+   */
+  std::unique_ptr<GraphTransition> modelObject() const;
+
   virtual QRectF boundingRect() const override;
 
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
-
-  void setCurrentPen(QPainter * painter);
 
   virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
   virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
@@ -103,6 +108,8 @@ private:
   void addBentLine(const QPointF& originPoint, const QLineF& line, const QPointF& destPoint, QList<QPolygonF>& polys) const;
 
   QPointF getIntersection(const QRectF& rect) const;
+
+  void setCurrentPen(QPainter * painter);
 
   void updateVisibility();
 

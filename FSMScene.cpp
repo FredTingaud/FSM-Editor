@@ -58,7 +58,7 @@ void FSMScene::setCodeValidator(std::function<QString(const QString&)> codeValid
   codeValidator_ = codeValidator;
 }
 
-void FSMScene::setCopyWriter(std::function<void(Graph&, QTextStream&)> copyWriter)
+void FSMScene::setCopyWriter(std::function<void(Graph&&, QTextStream&)> copyWriter)
 {
   copyWriter_ = copyWriter;
 }
@@ -223,14 +223,14 @@ void FSMScene::changeStartState(State* start)
 Graph FSMScene::graph() const
 {
   Graph result;
-  QList<GraphState*> everyStates;
-  QList<GraphTransition*> everyTransitions;
+  std::list<std::unique_ptr<GraphState>> everyStates;
+  std::list<std::unique_ptr<GraphTransition>> everyTransitions;
   for (auto state : states_)
   {
-    everyStates.append(state.second);
+    everyStates.push_back(state.second->modelObject());
     for (auto transition : state.second->getTransitions())
     {
-      everyTransitions.append(transition);
+      everyTransitions.push_back(transition->modelObject());
     }
   }
   result.setData(std::move(everyStates), std::move(everyTransitions));
@@ -240,15 +240,15 @@ Graph FSMScene::graph() const
 Graph FSMScene::copyGraph() const
 {
   Graph result;
-  QList<GraphState*> everyStates;
-  QList<GraphTransition*> everyTransitions;
+  std::list<std::unique_ptr<GraphState>> everyStates;
+  std::list<std::unique_ptr<GraphTransition>> everyTransitions;
   copySelectedStates(everyStates);
   copySelectedTransitions(everyTransitions);
   result.setData(std::move(everyStates), std::move(everyTransitions));
   return result;
 }
 
-void FSMScene::copySelectedTransitions(QList<GraphTransition*>& everyTransitions) const
+void FSMScene::copySelectedTransitions(std::list<std::unique_ptr<GraphTransition>>& everyTransitions) const
 {
   for (auto state : states_)
   {
@@ -256,24 +256,19 @@ void FSMScene::copySelectedTransitions(QList<GraphTransition*>& everyTransitions
     {
       if (transition->isSelected())
       {
-        GraphTransitionImpl* t = new GraphTransitionImpl(transition->getOriginState(), transition->getDestinationState());
-        t->setCode(transition->getCode());
-        everyTransitions.append(t);
+        everyTransitions.push_back(transition->modelObject());
       }
     }
   }
 }
 
-void FSMScene::copySelectedStates(QList<GraphState*>& everyStates) const
+void FSMScene::copySelectedStates(std::list<std::unique_ptr<GraphState>>& everyStates) const
 {
   for (auto state : states_)
   {
     if (state.second->isSelected())
     {
-      GraphStateImpl* copyState = new GraphStateImpl(state.second->name(), false);
-      copyState->setCode(state.second->getCode());
-      copyState->setPosition(state.second->pos() - selectionArea().boundingRect().topLeft());
-      everyStates.append(copyState);
+      everyStates.push_back(state.second->modelObject(-selectionArea().boundingRect().topLeft()));
     }
   }
 }
@@ -301,7 +296,7 @@ void FSMScene::wheelEvent(QGraphicsSceneWheelEvent *event)
 void FSMScene::setNewGraph(Graph&& graph)
 {
   clearAll();
-  for (auto state : graph.getAllStates())
+  for (auto&& state : graph.getAllStates())
   {
     auto res = addState(state->name(), state->getPosition());
     res->setCode(state->getCode());
@@ -310,7 +305,7 @@ void FSMScene::setNewGraph(Graph&& graph)
       setStartState(res);
     }
   }
-  for (auto transition : graph.getAllTransitions())
+  for (auto&& transition : graph.getAllTransitions())
   {
     auto res = getState(transition->getOriginState());
     auto dest = getState(transition->getDestinationState());
@@ -327,7 +322,7 @@ void FSMScene::copy()
   writeGraph(out, selection);
   QMimeData* data = new QMimeData();
   data->setData("fsm/graph", byteArray);
-  data->setText(copyTextVersion(selection));
+  data->setText(copyTextVersion(std::move(selection)));
   clipboard->setMimeData(data);
 }
 
@@ -337,11 +332,11 @@ void FSMScene::cut()
   deleteSelection();
 }
 
-QString FSMScene::copyTextVersion(Graph selection)
+QString FSMScene::copyTextVersion(Graph&& selection)
 {
   QString textVersion;
   QTextStream out(&textVersion, QIODevice::WriteOnly);
-  copyWriter_(selection, out);
+  copyWriter_(std::move(selection), out);
   return textVersion;
 }
 
@@ -436,12 +431,12 @@ FSMElement* FSMScene::getErrorElement() const
 void FSMScene::writeGraph(QDataStream& out, const Graph& graph)
 {
   QString type;
-  for (GraphState* g : graph.getAllStates())
+  for (auto&& g : graph.getAllStates())
   {
     type = STATE_STR;
     out << type << g->name() << g->getCode() << g->getPosition() << g->isStart();
   }
-  for (GraphTransition* t : graph.getAllTransitions())
+  for (auto&& t : graph.getAllTransitions())
   {
     type = TRANSITION_STR;
     out << type << t->getCode() << t->getOriginState() << t->getDestinationState();

@@ -10,27 +10,27 @@ Graph DummyReader::read(QTextStream& inStream)
   Graph result;
   QRegExp stateRegexp("!! (Starting )?State ([A-Za-z0-9_\\-]+) \\{");
   QRegExp transitionRegexp("!! Transition from ([A-Za-z0-9_\\-]+) to ([A-Za-z0-9_\\-]+) \\{");
-  QList<GraphState*> states;
-  QList<GraphTransition*> transitions;
+  std::list<std::unique_ptr<GraphState>> states;
+  std::list<std::unique_ptr<GraphTransition>> transitions;
   while (!inStream.atEnd())
   {
     QString line = inStream.readLine();
     if (line.contains(stateRegexp))
     {
-      states.append(readState(stateRegexp.cap(2), !stateRegexp.cap(1).isEmpty(), inStream));
+      states.emplace_back(readState(stateRegexp.cap(2), !stateRegexp.cap(1).isEmpty(), inStream));
     }
     else if (line.contains(transitionRegexp))
     {
-      transitions.append(readTransition(transitionRegexp.cap(1), transitionRegexp.cap(2), inStream));
+      transitions.emplace_back(readTransition(transitionRegexp.cap(1), transitionRegexp.cap(2), inStream));
     }
   }
   result.setData(std::move(states), std::move(transitions));
-  return result;
+  return std::move(result);
 }
 
-GraphState* DummyReader::readState(const QString& name, bool start, QTextStream& inStream)
+std::unique_ptr<GraphState> DummyReader::readState(const QString& name, bool start, QTextStream& inStream)
 {
-  GraphStateImpl* state = new GraphStateImpl(name, start);
+  std::unique_ptr<GraphStateImpl> state = std::make_unique<GraphStateImpl>(name, start);
   int openedBrackets = 1;
   QString code;
   QRegExp pos("\\} \\- ([0-9.\\-]+)\\:([0-9.\\-]+)");
@@ -62,12 +62,12 @@ GraphState* DummyReader::readState(const QString& name, bool start, QTextStream&
       }
     }
   }
-  return state;
+  return std::move(state);
 }
 
-GraphTransition* DummyReader::readTransition(const QString& origin, const QString& destination, QTextStream& inStream)
+std::unique_ptr<GraphTransition> DummyReader::readTransition(const QString& origin, const QString& destination, QTextStream& inStream)
 {
-  GraphTransitionImpl* transition = new GraphTransitionImpl(origin, destination);
+  std::unique_ptr<GraphTransitionImpl> transition = std::make_unique<GraphTransitionImpl>(origin, destination);
   int openedBrackets = 1;
   QString code;
   while (openedBrackets > 0 && !inStream.atEnd())
@@ -87,5 +87,5 @@ GraphTransition* DummyReader::readTransition(const QString& origin, const QStrin
     }
   }
   transition->setCode(code);
-  return transition;
+  return std::move(transition);
 }

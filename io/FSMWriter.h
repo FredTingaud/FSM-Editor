@@ -15,5 +15,5 @@ public:
   /**
    * Writes into given output stream the passed graph.
    */
-  virtual void write(Graph& scene, QTextStream& out) = 0;
+  virtual void write(Graph&& scene, QTextStream& out) = 0;
 };
