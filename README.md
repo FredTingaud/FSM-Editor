@@ -11,6 +11,19 @@ FSM Editor can run on any platform supported by Qt, including Windows, Unix and 
 
 ![Screenshot example] (http://fredtingaud.github.io/img/fsm-editor.png)
 
+## Usage
+To create a state, double click on the scene. The code of the state appears and can be edited on the right side text area.
+
+To link two states with a transition, click on the red arrow on the top right corner of the source state and drag it on top of the destination state. The condition of the transition can also be edited on the right side of the screen.
+
+States can be renamed by pressing F2 or the rename button of the toolbar.
+
+States and transitions can be removed by selecting them and pressing delete or the delete button of the toolbar.
+
+Zoom In and Out can be performed by Ctrl + wheel or with dedicated toolbar actions .
+
+When pressing the space bar or the mouse center button, the editor switches to scroll mode and it is possible to scroll the scene by dragging the mouse.
+
 ## Dependencies
 - Qt 5.X
 - CMake 3.X
