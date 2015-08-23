@@ -35,7 +35,7 @@ FSMEditor::FSMEditor(Settings& settings)
   scene_.setCodeValidator([&](const QString& code) {return settings_.validateCode(code); });
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());
-  splitter_->addWidget(makeLuaEditor());
+  splitter_->addWidget(makeCodeEditor());
   setCentralWidget(splitter_);
 
   modifiedChanged(true);
@@ -70,7 +70,9 @@ bool FSMEditor::maybeSave()
 {
   if (isWindowModified())
   {
-    QMessageBox::StandardButton res = QMessageBox::warning(this, tr("Graph was modified"), tr("The current graph was modified since last save.\nDo you want to save changes?"), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+    QMessageBox::StandardButton res = QMessageBox::warning(this, tr("Graph was modified"),
+                                                           tr("The current graph was modified since last save.\nDo you want to save changes?"),
+                                                           QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
     if (res == QMessageBox::Cancel)
       return false;
     if (res == QMessageBox::Save)
@@ -110,22 +112,27 @@ void FSMEditor::endMacro()
   undoStack_.endMacro();
 }
 
-QWidget* FSMEditor::makeLuaEditor()
+QWidget* FSMEditor::makeCodeEditor()
 {
   QWidget* result = new QWidget(this);
   QLayout* layout = new QVBoxLayout();
   result->setLayout(layout);
   configureErrorLabel();
   layout->addWidget(errorLabel_);
-  editor_ = new QPlainTextEdit(this);
-  editor_->setPlainText("function sample code");
+  configureCodeEditor();
   layout->addWidget(editor_);
-  settings_.initializeCodeHighlighter(editor_->document());
   connect(&scene_, SIGNAL(codeChanged(const QString&, const QString&)), SLOT(displaySetCode(const QString&, const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
   connect(&scene_, SIGNAL(zoomed(int)), &fsmView_, SLOT(zoomView(int)));
   return result;
+}
+
+void FSMEditor::configureCodeEditor()
+{
+  editor_ = new QPlainTextEdit(this);
+  editor_->setPlainText("function sample code");
+  settings_.initializeCodeHighlighter(editor_->document());
 }
 
 void FSMEditor::configureErrorLabel()

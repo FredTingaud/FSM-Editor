@@ -90,8 +90,9 @@ private:
 
 private:
   QWidget* makeViewPanel();
-  QWidget* makeLuaEditor();
+  QWidget* makeCodeEditor();
 
+  void configureCodeEditor();
   void configureErrorLabel();
 
   void fillAllMenus(QToolBar* toolbar);
