@@ -1,6 +1,7 @@
 #include <fsm-editor/FSMView.h>
 
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QPainter>
 
 FSMView::FSMView(QGraphicsScene* scene, QWidget* parent)
@@ -14,7 +15,7 @@ void FSMView::keyPressEvent(QKeyEvent *event)
   super::keyPressEvent(event);
   if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
   {
-    setDragMode(QGraphicsView::ScrollHandDrag);
+    setScrollMode(true);
   }
 }
 
@@ -23,7 +24,7 @@ void FSMView::keyReleaseEvent(QKeyEvent *event)
   super::keyReleaseEvent(event);
   if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
   {
-    setDragMode(QGraphicsView::RubberBandDrag);
+    setScrollMode(false);
   }
 }
 
@@ -68,4 +69,34 @@ void FSMView::drawBackground(QPainter * painter, const QRectF & rect)
     painter->setPen(Qt::white);
     painter->drawText(rect, Qt::AlignCenter, tr("Double click to\ncreate a new state"));
   }
+}
+
+void FSMView::mousePressEvent(QMouseEvent* e)
+{
+  if (e->button() == Qt::MidButton)
+  {
+    setScrollMode(true);
+  }
+  super::mousePressEvent(e);
+}
+
+void FSMView::setScrollMode(bool on)
+{
+  if (on)
+  {
+    setDragMode(QGraphicsView::ScrollHandDrag);
+  }
+  else
+  {
+    setDragMode(QGraphicsView::RubberBandDrag);
+  }
+}
+
+void FSMView::mouseReleaseEvent(QMouseEvent* e)
+{
+  if (e->button() == Qt::MidButton)
+  {
+    setScrollMode(false);
+  }
+  super::mouseReleaseEvent(e);
 }

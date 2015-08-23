@@ -44,4 +44,13 @@ protected:
   virtual void keyReleaseEvent(QKeyEvent *event) override;
 
   virtual void drawBackground(QPainter * painter, const QRectF & rect) override;
+
+  virtual void mousePressEvent(QMouseEvent *) override;
+
+  virtual void mouseReleaseEvent(QMouseEvent *) override;
+
+  /**
+   * Switch between scroll mode and the default drag mode, which is RubberBandMode.
+   */
+  void setScrollMode(bool on);
 };
