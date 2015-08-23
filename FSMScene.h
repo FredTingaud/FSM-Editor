@@ -69,7 +69,7 @@ public:
   /**
    * Signal emitted when the current code is changed.
    */
-  Q_SIGNAL void codeChanged(const QString& code);
+  Q_SIGNAL void codeChanged(const QString& code, const QString& error);
   /**
    * Signal emitted when the current code is hidden.
    */

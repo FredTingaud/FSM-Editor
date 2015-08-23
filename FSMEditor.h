@@ -14,6 +14,7 @@ class Settings;
 class QMenuBar;
 class QMenu;
 class QSplitter;
+class QLabel;
 
 /**
  * @brief Main class of the FSM Editor project.
@@ -79,7 +80,7 @@ private:
   Q_SLOT void beginMacro(const QString& title);
   Q_SLOT void endMacro();
   Q_SLOT void transferCodeChanged();
-  Q_SLOT void displaySetCode(const QString& code);
+  Q_SLOT void displaySetCode(const QString& code, const QString& error);
   Q_SLOT void hideCode();
   Q_SLOT void modifiedChanged(bool undoClean);
 
@@ -89,7 +90,9 @@ private:
 
 private:
   QWidget* makeViewPanel();
-  void makeLuaEditor();
+  QWidget* makeLuaEditor();
+
+  void configureErrorLabel();
 
   void fillAllMenus(QToolBar* toolbar);
 
@@ -129,4 +132,5 @@ private:
   QString currentFile_;
   QAction* saveAction_;
   QMenuBar* menu_;
+  QLabel* errorLabel_;
 };

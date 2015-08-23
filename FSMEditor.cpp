@@ -15,6 +15,7 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QSplitter>
+#include <QLabel>
 
 const QString FSMEditor::LAST_DIR_KEY = "last_dir";
 const QString FSMEditor::LAST_ZOOM = "last_zoom";
@@ -32,10 +33,9 @@ FSMEditor::FSMEditor(Settings& settings)
   scene_.setNameValidator([&](const QString& name){return settings_.validateStateName(name); });
   scene_.setCopyWriter([&](Graph& g, QTextStream& stream){return settings_.getWriter().write(g, stream); });
   scene_.setCodeValidator([&](const QString& code) {return settings_.validateCode(code); });
-  makeLuaEditor();
   splitter_ = new QSplitter(Qt::Horizontal, this);
   splitter_->addWidget(makeViewPanel());
-  splitter_->addWidget(editor_);
+  splitter_->addWidget(makeLuaEditor());
   setCentralWidget(splitter_);
 
   modifiedChanged(true);
@@ -110,15 +110,31 @@ void FSMEditor::endMacro()
   undoStack_.endMacro();
 }
 
-void FSMEditor::makeLuaEditor()
+QWidget* FSMEditor::makeLuaEditor()
 {
+  QWidget* result = new QWidget(this);
+  QLayout* layout = new QVBoxLayout();
+  result->setLayout(layout);
+  configureErrorLabel();
+  layout->addWidget(errorLabel_);
   editor_ = new QPlainTextEdit(this);
   editor_->setPlainText("function sample code");
+  layout->addWidget(editor_);
   settings_.initializeCodeHighlighter(editor_->document());
-  connect(&scene_, SIGNAL(codeChanged(const QString&)), SLOT(displaySetCode(const QString&)));
+  connect(&scene_, SIGNAL(codeChanged(const QString&, const QString&)), SLOT(displaySetCode(const QString&, const QString&)));
   connect(&scene_, SIGNAL(codeHidden()), SLOT(hideCode()));
   connect(editor_, SIGNAL(textChanged()), SLOT(transferCodeChanged()));
   connect(&scene_, SIGNAL(zoomed(int)), &fsmView_, SLOT(zoomView(int)));
+  return result;
+}
+
+void FSMEditor::configureErrorLabel()
+{
+  errorLabel_ = new QLabel("");
+  QFont f = errorLabel_->font();
+  f.setBold(true);
+  errorLabel_->setStyleSheet("color: red");
+  errorLabel_->setFont(f);
 }
 
 void FSMEditor::saveSettings()
@@ -146,6 +162,7 @@ void FSMEditor::hideCode()
 {
   editor_->clear();
   editor_->setEnabled(false);
+  errorLabel_->clear();
 }
 
 void FSMEditor::modifiedChanged(bool undoClean)
@@ -157,7 +174,7 @@ void FSMEditor::modifiedChanged(bool undoClean)
   }
 }
 
-void FSMEditor::displaySetCode(const QString& code)
+void FSMEditor::displaySetCode(const QString& code, const QString& errorMessage)
 {
   editor_->setEnabled(true);
   if (editor_->toPlainText() != code)
@@ -166,6 +183,7 @@ void FSMEditor::displaySetCode(const QString& code)
     editor_->setPlainText(code);
     editor_->blockSignals(false);
   }
+  errorLabel_->setText(errorMessage);
 }
 
 void FSMEditor::transferCodeChanged()

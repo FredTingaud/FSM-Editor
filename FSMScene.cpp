@@ -164,16 +164,16 @@ Transition* FSMScene::getTransition(const QString& name) const
 void FSMScene::setCode(FSMElement* element, const QString& code)
 {
   editingElement_ = element;
-  Q_EMIT codeChanged(code);
-  QString message = codeValidator_(code);
-  if (message.isEmpty())
+  QString errorMessage = codeValidator_(code);
+  if (errorMessage.isEmpty())
   {
     editingElement_->clearError();
   }
   else
   {
-    editingElement_->setInError(message);
+    editingElement_->setInError(errorMessage);
   }
+  Q_EMIT codeChanged(code, errorMessage);
 }
 
 void FSMScene::updateCode(const QString& code)
