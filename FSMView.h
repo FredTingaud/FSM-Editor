@@ -53,4 +53,6 @@ protected:
    * Switch between scroll mode and the default drag mode, which is RubberBandMode.
    */
   void setScrollMode(bool on);
+
+  QMouseEvent* copyMouseEventLeft(QMouseEvent* e);
 };

@@ -76,8 +76,18 @@ void FSMView::mousePressEvent(QMouseEvent* e)
   if (e->button() == Qt::MidButton)
   {
     setScrollMode(true);
+    QMouseEvent* left = copyMouseEventLeft(e);
+    super::mousePressEvent(left);
   }
-  super::mousePressEvent(e);
+  else
+  {
+    super::mousePressEvent(e);
+  }
+}
+
+QMouseEvent* FSMView::copyMouseEventLeft(QMouseEvent* e)
+{
+  return new QMouseEvent(e->type(), e->localPos(), Qt::LeftButton, e->buttons() & Qt::LeftButton, e->modifiers());
 }
 
 void FSMView::setScrollMode(bool on)
@@ -97,6 +107,11 @@ void FSMView::mouseReleaseEvent(QMouseEvent* e)
   if (e->button() == Qt::MidButton)
   {
     setScrollMode(false);
+    QMouseEvent* left = copyMouseEventLeft(e);
+    super::mousePressEvent(left);
   }
-  super::mouseReleaseEvent(e);
+  else
+  {
+    super::mouseReleaseEvent(e);
+  }
 }
