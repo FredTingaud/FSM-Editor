@@ -1,5 +1,7 @@
 # FSM Editor
 
+![alt tag](https://cloud.githubusercontent.com/assets/16545838/26177823/a74d1792-3b5b-11e7-8f3c-ccc77520c72e.png)
+
 ## Overview
 FSM Editor is a small implementation of a graphical editor for Finite State Machines.
 
@@ -8,8 +10,6 @@ It can be customized to save and load FSM graphs to any format or language by ov
 The main widget and entry point is FSMEditor.
 
 FSM Editor can run on any platform supported by Qt, including Windows, Unix and Mac OS.
-
-![Screenshot example] (http://fredtingaud.github.io/img/fsm-editor.png)
 
 ## Usage
 To create a state, double click on the scene. The code of the state appears and can be edited on the right side text area.
