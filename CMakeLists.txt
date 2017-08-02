@@ -19,6 +19,10 @@ if (UNIX)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 endif (UNIX)
 
+if (APPLE)
+   set(CMAKE_CXX_STANDARD 14)
+endif (APPLE)
+
 option(BUILD_DOC "Build Doxygen documentation" false)
 if (BUILD_DOC)
   find_package(Doxygen)
