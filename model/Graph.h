@@ -17,7 +17,7 @@ public:
   Graph()
   {}
 
-  Graph::Graph(Graph&& other)
+  Graph(Graph&& other)
     : states_(std::move(other.states_))
     , transitions_(std::move(other.transitions_))
   {}
